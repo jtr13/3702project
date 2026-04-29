@@ -1,0 +1,13 @@
+# NYC Restaurant Data
+
+```{r}
+
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(patchwork)
+library(tidyverse)
+
+df <- read_csv("data/nyc_restaurant_sample.csv", show_col_types = FALSE)
+
+```
