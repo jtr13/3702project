@@ -35,7 +35,7 @@ You should only submit **ONE** `.qmd` file.
 
 2. Completely delete the YAML header (the section at the top of the `.qmd` that includes name, title, date, output, etc.) including the `---` line.
     
-3. Choose a short, descriptive, human readable title for your project as your title will show up in the table of contents -- look at examples in the panel on the left. Capitalize the first letter only ("sentence case"). On the first line of your document, enter a single hashtag, **followed by a single whitespace**, and then your title. Do not use single `#` headers anywhere else in the document. 
+3. Choose a short, descriptive, human readable title for your project as your title will show up in the table of contents -- look at examples in the panel on the left. Use title case for your chapter title. On the first line of your document, enter a single hashtag, **followed by a single whitespace**, and then your title. Do not use single `#` headers anywhere else in the document. 
     
 4. The second line should be blank, followed by your name(s):
     
