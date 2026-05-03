@@ -1,5 +1,7 @@
 # NYC Restaurant Inspection Analysis
 
+Charlene Shen
+
 ## Introduction
 
 
