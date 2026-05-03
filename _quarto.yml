@@ -29,7 +29,6 @@ execute:
   echo: true
   warning: false
   message: false
-  error: true
 
 editor: source
 
