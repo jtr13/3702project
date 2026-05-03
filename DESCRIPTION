@@ -6,6 +6,7 @@ Imports:
     ggridges,
     knitr,
     naniar,
+    patchwork,
     redav,
     rmarkdown,
     sf,
