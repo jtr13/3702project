@@ -13,6 +13,7 @@ book:
     - affordablehousing.qmd
     - nyc_shelter_census.qmd
     - nypdarrests.qmd
+    - nyc_restaurant_data_analysis.qmd
     - instructions.qmd
     
   
