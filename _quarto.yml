@@ -12,6 +12,7 @@ book:
     - index.qmd
     - affordablehousing.qmd
     - nyc_shelter_census.qmd
+    - nypdarrests.qmd
     - instructions.qmd
     
   
