@@ -1,0 +1,25 @@
+# NYC Student Feedback
+
+Zirou Liang
+
+## Introduction
+
+I was originally interested in a mental health-focused dataset, but found that there isn't a large government dataset focused on residents' psychological aspects available in NYC Open Data. However, I accessed the current dataset published by the Department of Education (DOE), which focuses on students' feedback on their schools and includes responses indicating their satisfaction levels.
+
+The responses are already aggregated to the school level, so instead of analyzing at an individual level, I will analyze students' satisfaction at the school and city levels: 
+
+First, across New York City (NYC), which dimensions of school climate did students rate most and least positively? Second, do the five boroughs differ in students' perceptions of climate, and if so, on which dimensions? Third, do the survey response rates correlate with how positively students rate their schools?
+
+## Data
+
+```{r}
+df <- read.csv("data/nyc_student_2021.csv")
+```
+
+### Description
+
+The data come from the 2021 Public Data File -Student (https://data.cityofnewyork.us/Education/2021-Public-Data-File-Student/gdx6-nrns/about_data) on NYC Open Data, published by the New York City Department of Education. The underlying survey was administered to students in grades 6-12 across NYC public schools in 2021. For privacy reasons, the published public dataset aggregates individual responses to the school level and reports, for each survey question, the percentage of respondents who selected each response category at each school. The dataset contains 1077 schools (rows) and 133 columns. The first three columns identify the school, including a District Borough Number (DBN, e.g., 01M034), the school name, and the survey response rate. The DBN encodes the school’s district (the first two characters) and borough (third character: M for Manhattan, X for Bronx, K for Brooklyn, Q for Queens, and R for Staten Island), which we will use for geographic analysis later in this chapter. The remaining 130 columns hold 65 survey questions, each split across two columns reporting the percentage of students at the “negative pole” (e.g., Strongly Disagree / Disagree) and the “positive pole” (e.g., Strongly Agree / Agree) on the response scale. The dataset is updated and published annually; I chose the 2021 dataset because it is the most recent year available on NYC Open Data.
+
+There are two details about the question columns that are worth flagging. One is that questions q50-q56 are negative framed, asking about bullying, harassment, drug use, and gang activity, so high “positive pole” percentages on these items indicate less supportive learning environments. The other note here is that grades restrict two question blocks: q57-q58 (high school application support) are asked only of grades 6-8, and q59-65 (college and career readiness) are asked only for grades 9-12; we will analyze the structural pattern of such missing values in the next section.
+
+### Missing value analysis
