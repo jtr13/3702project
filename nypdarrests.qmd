@@ -1,0 +1,226 @@
+# NYPD Arrest Data
+
+By: Jade Amaya
+
+## Introduction
+
+I was inspired to select the NYPD Arrest (Historic) Data in lieu of other courses that discuss psychology, law, and history. I'm interested in studying the demographics of people arrested in NYC, specifically their demographics. Some questions I hope to answer are: What groups of people are being arrested the most? What are the trends of arrests? What types of crimes are people arrested for? Where are most of these arrests happening?
+
+## Data
+
+### Description 
+The data was collected by the NYPD and published by NYC's Open Data team.
+The data was imported, using an API from the NYPD Arrest (Year to Date) Data set.
+The dataframe contains 19 columns and 1000 rows. The data is updated every 
+year some time during mid to late April. Some limitations of this dataset is
+that by using an API, only 1000 rows can be imported at a time, there is no
+data provided that informs us whether or not these arrested people were let go,
+whether they were scheduled a trial, or whether some of these arrests pertain
+to the same individual; that some demographic information pertaining to 
+individuals are missing; and that even though these people were arrested, 
+cannot say for certain all actually committed the crime.
+
+
+
+### Missing value analysis
+
+```{r}
+#| warining: false
+library(tidyverse)
+df <- read_csv("https://data.cityofnewyork.us/resource/uip8-fykc.csv", na = c("(null)", ""))
+str(df)
+
+df <- df |>
+  rename(Precinct = arrest_precinct)
+```
+
+```{r}
+#| warning: false
+library(redav)
+df_new <- df |>
+  select(starts_with(c("perp_sex", "age", "pd_d", "k", "o", "law_")))
+colnames(df_new) <- str_remove_all(colnames(df_new), "PE")
+plot_missing(df_new)
+```
+Most of the rows in the dataset contained no missing values. Above the graph 
+shows that the second most common pattern had sex and age group missing values.
+The third pattern included all other columns without missing values, but the level
+of defense. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Results
+
+### Where are arrests concentrated?
+```{r}
+library(ggplot2)
+ggplot(df, aes(x = longitude, y = latitude)) +
+  geom_point(size = 0.5, aes(color = arrest_boro)) +
+  theme_bw()
+```
+
+
+```{r}
+library(sf)
+nybb <- st_read("nybb_26a/nybb.shp")
+
+nybb <- nybb |>
+  mutate(BoroCode = recode(BoroCode, `1` = "M", `2` = "B", `3` = "K",
+                           '4' = "Q", '5' = "S")) |>
+  rename(arrest_boro = BoroCode)
+```
+
+```{r}
+boro <- left_join(nybb, df) 
+
+boro_points <- st_as_sf(boro, 
+                        coords = c("longitude", "latitide", crs = 4326))
+```
+I need help below because I'm trying to plot coordinates on the shape, but
+it's not working, even after I asked Mackenna for help
+```{r}
+#points_sf <- boro |> 
+ #select(longitude, latitude, arrest_boro) |> 
+  #na.omit() |> 
+  #st_as_sf(coords = c("longitude", "latitude"), crs = 4326) 
+#ggplot() + 
+ #geom_sf(data = boro) +
+  #geom_sf(data = points_sf, size = .1)
+  #theme_minimal()
+```
+
+### What are the top crimes people are arrested for?
+
+```{r}
+#| warning: false
+library(ggplot2)
+library(forcats)
+
+ggplot(df, aes(y = law_cat_cd)) + 
+  geom_bar(aes(y = fct_rev(fct_infreq(law_cat_cd)), fill = perp_race)) +
+  theme_minimal() +
+  scale_color_manual() +
+  labs(title = "Arrests in NYC by Crime", x = "count", 
+       y = "Offense", fill = "Race") +
+  facet_wrap(vars(perp_sex)) 
+```
+
+The graph represents the total counts of crime type by race, compared across 
+gender groups, where NA was a non-specified sex. 
+The crime codes are the following: F (felony); M (misdemeanor); V (violation); 
+9 (infraction).
+
+### Who are being arrested the most?
+
+```{r}
+#| warning: false
+library(ggplot2)
+library(forcats)
+ggplot(df, aes(y = perp_race)) + 
+  geom_bar(aes(y = fct_rev(fct_infreq(perp_race)), fill = perp_sex)) +
+  theme_minimal() +
+  labs(title = "Arrests in NYC by Race", x = "count", y = "Race", fill = "Sex")
+```
+
+```{r}
+newer <- left_join(nypp, df) |>
+  select(c("Precinct", "perp_race", "Shape_Leng", "Shape_Area", "geometry")) |>
+  group_by(perp_race, Precinct) |>
+  summarise(race_count = n())
+
+ggplot(newer) +
+  geom_sf(aes(fill = perp_race)) + 
+  geom_sf_text(aes(label = Precinct), size = 2, color = "white")  +
+  theme_void() +
+  facet_wrap(vars(perp_race))
+```
+```{r}
+library(tidyverse)
+library(sf)
+library(readxl)
+
+nypp <- read_sf("nypp_25c/nypp.shp")
+
+
+newdata <- left_join(nypp, df) |>
+  select(c("Precinct", "perp_sex", "Shape_Leng", "Shape_Area", "geometry")) |>
+  filter(perp_sex == "M") |>
+  group_by(Precinct) |>
+  summarise(Male = n())
+
+male <- ggplot(newdata) +
+  geom_sf(aes(fill = Male)) + 
+  geom_sf_text(aes(label = Precinct), size = 2,
+               color = "white") +
+   scale_fill_gradient(low = "lightblue", high = "purple",
+                     na.value = "grey70") +
+  theme_void() 
+
+
+```
+
+```{r}
+#| warning: false
+library(patchwork)
+
+women <- left_join(nypp, df) |>
+  select(c("Precinct", "perp_sex", "Shape_Leng", "Shape_Area", "geometry")) |>
+  filter(perp_sex == "F") |>
+  group_by(Precinct) |>
+  summarise(Female = n())
+
+female <- ggplot(women) +
+  geom_sf(aes(fill = Female)) + 
+  geom_sf_text(aes(label = Precinct), size = 2,
+               color = "white") +
+   scale_fill_gradient(low = "lightblue", high = "purple",
+                     na.value = "grey70") +
+  theme_void()
+
+female | male
+```
+
+
+
+```{r}
+white <- left_join(nypp, df) |>
+  select(c("Precinct", "perp_race", "Shape_Leng", "Shape_Area", "geometry")) |>
+  filter(perp_race == "WHITE") |>
+  group_by(Precinct) |>
+  summarise(
+    white_count = n())
+
+black <- left_join(nypp, df) |>
+  select(c("Precinct", "perp_race", "Shape_Leng", "Shape_Area", "geometry")) |>
+  filter(perp_race == "BLACK") |>
+  group_by(Precinct) |>
+  summarise(
+    black_count = n())
+
+g1 <- ggplot(white) +
+  geom_sf(aes(fill = white_count)) + 
+  geom_sf_text(aes(label = Precinct), size = 2,
+               color = "white")  +
+  theme_void()
+
+g2 <- ggplot(black) +
+  geom_sf(aes(fill = black_count)) + 
+  geom_sf_text(aes(label = Precinct), size = 2,
+               color = "white")  +
+  theme_void()
+
+library(patchwork)
+g1 + g2
+```
+
+## Conclusion
