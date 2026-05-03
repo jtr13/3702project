@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>3&nbsp; Contributor instructions – NYC Open Data</title>
+<title>4&nbsp; Contributor instructions – NYC Open Data</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -33,7 +33,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./affordablehousing.html" rel="prev">
+<link href="./nyc_shelter_census.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -84,7 +84,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./instructions.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Contributor instructions</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./instructions.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Contributor instructions</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -126,8 +126,14 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./nyc_shelter_census.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">NYC Department of Homeless Services Daily Shelter Census Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./instructions.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Contributor instructions</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Contributor instructions</span></span></a>
   </div>
 </li>
     </ul>
@@ -140,9 +146,9 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#background" id="toc-background" class="nav-link active" data-scroll-target="#background"><span class="header-section-number">3.1</span> Background</a></li>
-  <li><a href="#submission-steps" id="toc-submission-steps" class="nav-link" data-scroll-target="#submission-steps"><span class="header-section-number">3.2</span> Submission steps</a></li>
-  <li><a href="#preparing-your-.qmd-file" id="toc-preparing-your-.qmd-file" class="nav-link" data-scroll-target="#preparing-your-.qmd-file"><span class="header-section-number">3.3</span> Preparing your <code>.qmd</code> file</a></li>
+  <li><a href="#background" id="toc-background" class="nav-link active" data-scroll-target="#background"><span class="header-section-number">4.1</span> Background</a></li>
+  <li><a href="#submission-steps" id="toc-submission-steps" class="nav-link" data-scroll-target="#submission-steps"><span class="header-section-number">4.2</span> Submission steps</a></li>
+  <li><a href="#preparing-your-.qmd-file" id="toc-preparing-your-.qmd-file" class="nav-link" data-scroll-target="#preparing-your-.qmd-file"><span class="header-section-number">4.3</span> Preparing your <code>.qmd</code> file</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/jtr13/3702project/blob/main/instructions.qmd" class="toc-action"><i class="bi bi-github"></i>View source</a></li><li><a href="https://github.com/jtr13/3702project/edit/main/instructions.qmd" class="toc-action"><i class="bi empty"></i>Edit this page</a></li><li><a href="https://github.com/jtr13/3702project/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -151,7 +157,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Contributor instructions</span></h1>
+<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Contributor instructions</span></h1>
 </div>
 
 
@@ -169,12 +175,12 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>This chapter gives you all the information you need to upload your community contribution. <strong>Please read this entire document carefully before making your submission.</strong> Of particular note is the fact that the Quarto book format requires a different <code>.qmd</code> format than you’re used to, so you must make changes to the beginning of the file as described below before submitting.</p>
-<section id="background" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="background"><span class="header-section-number">3.1</span> Background</h2>
+<section id="background" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="background"><span class="header-section-number">4.1</span> Background</h2>
 <p>This web site makes use of Quarto to render a collection of <code>.qmd</code> files into a nicely formatted online book with chapters and subchapters. Your job will be to submit a slightly modified version of your community contribution <code>.qmd</code> file to the GitHub repository where the source files for this web site are stored. On the backend, the admins will divide the chapters into book sections and order them.</p>
 </section>
-<section id="submission-steps" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="submission-steps"><span class="header-section-number">3.2</span> Submission steps</h2>
+<section id="submission-steps" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="submission-steps"><span class="header-section-number">4.2</span> Submission steps</h2>
 <p>Workflow: contributing to a repository that you do not have write access to.</p>
 <ol type="1">
 <li><p>Fork this repo.</p></li>
@@ -187,8 +193,8 @@ ul.task-list li input[type="checkbox"] {
 <li><p>At this point a back and forth will begin with the team managing the pull requests. If you are asked to make changes, simply make the changes on your local branch, save, commit, and push to GitHub. The new commits will be added to your pull request; <strong>you do not need to, and should not, create a new pull request.</strong> (If, based on the circumstances, it does make sense to close the pull request and start a new one, we will tell you.)</p></li>
 </ol>
 </section>
-<section id="preparing-your-.qmd-file" class="level2" data-number="3.3">
-<h2 data-number="3.3" class="anchored" data-anchor-id="preparing-your-.qmd-file"><span class="header-section-number">3.3</span> Preparing your <code>.qmd</code> file</h2>
+<section id="preparing-your-.qmd-file" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="preparing-your-.qmd-file"><span class="header-section-number">4.3</span> Preparing your <code>.qmd</code> file</h2>
 <p>You should only submit <strong>ONE</strong> <code>.qmd</code> file.</p>
 <ol type="1">
 <li><p>Create a concise, descriptive name for your file, such as <code>gardens.qmd</code> or <code>housing.qmd</code>. The words only and joined with underscores, <strong>no white space</strong>. Use <code>.qmd</code> not <code>.Qmd</code>. In addition, all letters must be <strong>lowercase</strong>.</p></li>
@@ -609,8 +615,8 @@ Your content starts here. </code></pre></li>
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./affordablehousing.html" class="pagination-link" aria-label="Affordable Housing">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Affordable Housing</span></span>
+      <a href="./nyc_shelter_census.html" class="pagination-link" aria-label="NYC Department of Homeless Services Daily Shelter Census Analysis">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">NYC Department of Homeless Services Daily Shelter Census Analysis</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
