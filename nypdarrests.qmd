@@ -31,7 +31,8 @@ df <- read_csv("https://data.cityofnewyork.us/resource/uip8-fykc.csv", na = c("(
 str(df)
 
 df <- df |>
-  rename(Precinct = arrest_precinct)
+  rename(Precinct = arrest_precinct) 
+
 ```
 
 ```{r}
