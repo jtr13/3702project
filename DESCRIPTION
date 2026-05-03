@@ -6,6 +6,7 @@ Imports:
     knitr,
     redav,
     rmarkdown,
-    sf
+    sf,
+    tidyverse
 Remotes: 
     jtr13/redav
