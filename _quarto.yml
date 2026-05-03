@@ -11,8 +11,9 @@ book:
   chapters:
     - index.qmd
     - affordablehousing.qmd
+    - nyc_shelter_census.qmd
     - instructions.qmd
-
+    
   
 format:
   html:
