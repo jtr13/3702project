@@ -4,7 +4,7 @@ By: Jade Amaya
 
 ## Introduction
 
-I was inspired to select the NYPD Arrest (Historic) Data in lieu of other courses that discuss psychology, law, and history. I'm interested in studying the demographics of people arrested in NYC, specifically their demographics. Some questions I hope to answer are: What groups of people are being arrested the most? What are the trends of arrests? What types of crimes are people arrested for? Where are most of these arrests happening?
+I was inspired to select the NYPD Arrest (Historic) Data in lieu of other courses that discuss psychology, law, and history. I'm interested in studying the demographics of people arrested in NYC, specifically their demographics. Some questions I hope to answer are: What groups of people are being arrested the most? What are the trends of arrests? What types of crimes are people arrested for? Where are most of these arrests happening? 
 
 ## Data
 
