@@ -97,7 +97,109 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="data" class="level2">
 <h2 class="anchored" data-anchor-id="data">Data</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data/nyc_student_2021.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.6
+✔ forcats   1.0.1     ✔ stringr   1.6.0
+✔ ggplot2   4.0.1     ✔ tibble    3.3.1
+✔ lubridate 1.9.4     ✔ tidyr     1.3.2
+✔ purrr     1.2.1     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the data</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>student <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data/nyc_student_2021.csv"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename the columns</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(student)[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"dbn"</span>, <span class="st">"school_name"</span>, <span class="st">"response_rate"</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Strip the percentage sign and convert to numeric values</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>percentage_col <span class="ot">&lt;-</span> <span class="fu">names</span>(student)[<span class="dv">3</span><span class="sc">:</span><span class="fu">ncol</span>(student)]</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>strip_percentage <span class="ot">&lt;-</span> <span class="cf">function</span>(col) <span class="fu">as.numeric</span>(<span class="fu">str_remove</span>(col, <span class="st">"%"</span>))</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>student <span class="ot">&lt;-</span> student <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">all_of</span>(percentage_col), strip_percentage))</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Parse DBN into borough</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>borough_lookup <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">M =</span> <span class="st">"Manhattan"</span>,</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">X =</span> <span class="st">"Bronx"</span>,</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">K =</span> <span class="st">"Brooklyn"</span>,</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">Q =</span> <span class="st">"Queens"</span>,</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">R =</span> <span class="st">"Staten Island"</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>student <span class="ot">&lt;-</span> student <span class="sc">|&gt;</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">borough_code =</span> <span class="fu">substr</span>(dbn, <span class="dv">3</span>, <span class="dv">3</span>), <span class="at">borough =</span> borough_lookup[borough_code]) <span class="sc">|&gt;</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(borough_code, borough, <span class="at">.after =</span> school_name)</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="do">###### Reshape question columns ######</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>question_col <span class="ot">&lt;-</span> <span class="fu">names</span>(student)[<span class="dv">6</span><span class="sc">:</span><span class="fu">ncol</span>(student)]</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>pair_idx <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">seq_along</span>(question_col), <span class="at">ncol =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>question_dict <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">neg_col =</span> question_col[pair_idx[, <span class="dv">1</span>]],</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">pos_col =</span> question_col[pair_idx[, <span class="dv">2</span>]],</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">question_n =</span> <span class="fu">str_extract</span>(neg_col, <span class="st">"^q</span><span class="sc">\\</span><span class="st">d+"</span>),</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">question_int =</span> <span class="fu">as.integer</span>(<span class="fu">str_remove</span>(question_n, <span class="st">"q"</span>))</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Pair questions with their corresponding topics</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>question_dict <span class="ot">&lt;-</span> question_dict <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">topic =</span> <span class="fu">case_when</span>(</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>  question_int <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">37</span>) <span class="sc">~</span> <span class="st">"Diversity, Equity, &amp; Inclusion (DEI)"</span>,</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>  question_int <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">11</span><span class="sc">:</span><span class="dv">16</span>) <span class="sc">~</span> <span class="st">"Emotional Well-Being"</span>,</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>  question_int <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">17</span><span class="sc">:</span><span class="dv">21</span>) <span class="sc">~</span> <span class="st">"Course Clarity"</span>,</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>  question_int <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">22</span><span class="sc">:</span><span class="dv">27</span>, <span class="dv">29</span>, <span class="dv">31</span><span class="sc">:</span><span class="dv">33</span>) <span class="sc">~</span> <span class="st">"Personal Attention and Support"</span>,</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>  question_int <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">28</span>, <span class="dv">39</span>, <span class="dv">41</span><span class="sc">:</span><span class="dv">45</span>) <span class="sc">~</span> <span class="st">"Academic Press"</span>,</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>  question_int <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">30</span>, <span class="dv">34</span><span class="sc">:</span><span class="dv">36</span>, <span class="dv">38</span>) <span class="sc">~</span> <span class="st">"Student-Teacher Trust"</span>,</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>  question_int <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">40</span>, <span class="dv">46</span><span class="sc">:</span><span class="dv">49</span>, <span class="dv">55</span><span class="sc">:</span><span class="dv">56</span>) <span class="sc">~</span> <span class="st">"Safety"</span>,</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>  question_int <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">50</span><span class="sc">:</span><span class="dv">54</span>) <span class="sc">~</span> <span class="st">"Preventing Bullying"</span>,</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>  question_int <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">57</span><span class="sc">:</span><span class="dv">65</span>) <span class="sc">~</span> <span class="st">"Guidance"</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="co"># Build the cleaned wide table</span></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>pos <span class="ot">&lt;-</span> <span class="fu">setNames</span>(question_dict<span class="sc">$</span>pos_col, <span class="fu">paste0</span>(question_dict<span class="sc">$</span>question_n, <span class="st">"_pos"</span>))</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>neg <span class="ot">&lt;-</span> <span class="fu">setNames</span>(question_dict<span class="sc">$</span>neg_col, <span class="fu">paste0</span>(question_dict<span class="sc">$</span>question_n, <span class="st">"_neg"</span>))</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>student_wide <span class="ot">&lt;-</span> student <span class="sc">|&gt;</span></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(dbn, school_name, borough_code, borough, response_rate, <span class="fu">all_of</span>(<span class="fu">c</span>(pos, neg)))</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to long table</span></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>student_long <span class="ot">&lt;-</span> student_wide <span class="sc">|&gt;</span></span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols       =</span> <span class="fu">matches</span>(<span class="st">"^q</span><span class="sc">\\</span><span class="st">d+_(pos|neg)$"</span>),</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to   =</span> <span class="fu">c</span>(<span class="st">"question_n"</span>, <span class="st">"pole"</span>),</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_pattern =</span> <span class="st">"(q</span><span class="sc">\\</span><span class="st">d+)_(pos|neg)"</span>,</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to  =</span> <span class="st">"percentage"</span></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> pole, <span class="at">values_from =</span> percentage) <span class="sc">|&gt;</span></span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>    question_dict <span class="sc">|&gt;</span> </span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(question_n, question_int, topic), <span class="at">by =</span> <span class="st">"question_n"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>    <span class="at">net_pos =</span> pos <span class="sc">-</span> neg,</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Reverse coding so that larger values consistently indicate higher satisfaction </span></span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>    <span class="at">net_pos =</span> <span class="fu">if_else</span>(question_int <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">14</span><span class="sc">:</span><span class="dv">16</span>, <span class="dv">50</span><span class="sc">:</span><span class="dv">56</span>), <span class="sc">-</span>net_pos, net_pos)</span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a><span class="co"># Select the cleaned long table</span></span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>student_clean <span class="ot">&lt;-</span> student_long <span class="sc">|&gt;</span></span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(school_name, borough, response_rate, question_int, topic, net_pos)</span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(student_clean)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+  school_name                   borough response_rate question_int topic net_pos
+  &lt;chr&gt;                         &lt;chr&gt;           &lt;dbl&gt;        &lt;int&gt; &lt;chr&gt;   &lt;dbl&gt;
+1 P.S. 034 Franklin D. Rooseve… Manhat…            75            1 Dive…      26
+2 P.S. 034 Franklin D. Rooseve… Manhat…            75            2 Dive…      64
+3 P.S. 034 Franklin D. Rooseve… Manhat…            75            3 Dive…      80
+4 P.S. 034 Franklin D. Rooseve… Manhat…            75            4 Dive…      78
+5 P.S. 034 Franklin D. Rooseve… Manhat…            75            5 Dive…      80
+6 P.S. 034 Franklin D. Rooseve… Manhat…            75            6 Dive…      64</code></pre>
+</div>
 </div>
 <section id="description" class="level3">
 <h3 class="anchored" data-anchor-id="description">Description</h3>
