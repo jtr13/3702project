@@ -7,6 +7,7 @@ Imports:
     knitr,
     naniar,
     patchwork,
+    readxl,
     redav,
     rmarkdown,
     sf,
