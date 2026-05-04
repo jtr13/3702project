@@ -11,3 +11,6 @@ _book/
 *.Rproj
 /.quarto/
 **/*.quarto_ipynb
+data/citibike
+*.html
+3702project

@@ -3,10 +3,12 @@ Type: Book
 Title: Does not matter
 Version: 0.0.0.9000
 Imports: 
+    arrow,
     ggridges,
     knitr,
     naniar,
     patchwork,
+    readxl,
     redav,
     rmarkdown,
     sf,
