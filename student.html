@@ -204,10 +204,121 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="description" class="level3">
 <h3 class="anchored" data-anchor-id="description">Description</h3>
 <p>The data come from the 2021 Public Data File -Student (https://data.cityofnewyork.us/Education/2021-Public-Data-File-Student/gdx6-nrns/about_data) on NYC Open Data, published by the New York City Department of Education. The underlying survey was administered to students in grades 6-12 across NYC public schools in 2021. For privacy reasons, the published public dataset aggregates individual responses to the school level and reports, for each survey question, the percentage of respondents who selected each response category at each school. The dataset contains 1077 schools (rows) and 133 columns. The first three columns identify the school, including a District Borough Number (DBN, e.g., 01M034), the school name, and the survey response rate. The DBN encodes the school’s district (the first two characters) and borough (third character: M for Manhattan, X for Bronx, K for Brooklyn, Q for Queens, and R for Staten Island), which we will use for geographic analysis later in this chapter. The remaining 130 columns hold 65 survey questions, each split across two columns reporting the percentage of students at the “negative pole” (e.g., Strongly Disagree / Disagree) and the “positive pole” (e.g., Strongly Agree / Agree) on the response scale. The dataset is updated and published annually; I chose the 2021 dataset because it is the most recent year available on NYC Open Data.</p>
-<p>There are two details about the question columns that are worth flagging. One is that questions q50-q56 are negative framed, asking about bullying, harassment, drug use, and gang activity, so high “positive pole” percentages on these items indicate less supportive learning environments. The other note here is that grades restrict two question blocks: q57-q58 (high school application support) are asked only of grades 6-8, and q59-65 (college and career readiness) are asked only for grades 9-12; we will analyze the structural pattern of such missing values in the next section.</p>
+<p>There are two details about the question columns that are worth flagging. One is that questions q50-q56 are negative framed, asking about bullying, harassment, drug use, and gang activity, so high “positive pole” percentages on these items indicate less supportive learning environments. The other note here is that grades restrict two question blocks: q57-q58 (high school application support) are asked only of grades 6-8, and q59-q65 (college and career readiness) are asked only for grades 9-12; we will analyze the structural pattern of such missing values in the next section.</p>
 </section>
 <section id="missing-value-analysis" class="level3">
 <h3 class="anchored" data-anchor-id="missing-value-analysis">Missing value analysis</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the percentage of schools missing each question, inferred by grade-level audience</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>student_na <span class="ot">&lt;-</span> student_clean <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">grade_level =</span> <span class="fu">case_when</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  question_int <span class="sc">%in%</span> <span class="dv">57</span><span class="sc">:</span><span class="dv">58</span> <span class="sc">~</span> <span class="st">"grades 6-8 only"</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  question_int <span class="sc">%in%</span> <span class="dv">59</span><span class="sc">:</span><span class="dv">65</span> <span class="sc">~</span> <span class="st">"grades 9-12 only"</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"all grades 6-12"</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(question_int, grade_level) <span class="sc">|&gt;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">percentage_na =</span> <span class="fu">mean</span>(<span class="fu">is.na</span>(net_pos)) <span class="sc">*</span> <span class="dv">100</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'question_int'. You can override using the
+`.groups` argument.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(student_na, </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> question_int, <span class="at">y =</span> percentage_na, <span class="at">fill =</span> grade_level)) <span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">65</span>, <span class="dv">5</span>)) <span class="sc">+</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">60</span>)) <span class="sc">+</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"all grades 6-12"</span> <span class="ot">=</span> <span class="st">"grey"</span>,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"grades 6-8 only"</span> <span class="ot">=</span> <span class="st">"deepskyblue"</span>,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"grades 9-12 only"</span> <span class="ot">=</span> <span class="st">"hotpink"</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">+</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"The Percentage of Missing Responses for Each Question"</span>,</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Question Number"</span>,</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"% of School with No Response"</span>,</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"Question Audience"</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="student_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The results of missing values are unexpected: although we already knew that there would be missing responses for q57-q65 due to the grade restriction (as explained in the data description section), we found that q1-q56 have a consistent percentage of missing responses, indicating that there might be schools that didn’t submit their responses for all questions. Therefore, we will be examining schools that missed all responses in the next step:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>schools_na <span class="ot">&lt;-</span> student_clean <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(school_name) <span class="sc">|&gt;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">all</span>(<span class="fu">is.na</span>(net_pos))) <span class="sc">|&gt;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(school_name)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>schools_na</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 46 × 1
+   school_name                                             
+   &lt;chr&gt;                                                   
+ 1 Cascades High School                                    
+ 2 High School of Hospitality Management                   
+ 3 Independence High School                                
+ 4 Harvey Milk High School                                 
+ 5 High School for Law, Advocacy and Community Justice     
+ 6 The Lexington Academy                                   
+ 7 The Judith S. Kaye School                               
+ 8 Teachers College Community School                       
+ 9 Thurgood Marshall Academy for Learning and Social Change
+10 P.S. X037 - Multiple Intelligence School                
+# ℹ 36 more rows</code></pre>
+</div>
+</div>
+<p>As expected, we found that 46 schools failed to submit their responses. Now, let’s remove these schools from our cleaned dataset to prevent noise. Then, we will re-examine the missing value using the bar chart.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>student_clean <span class="ot">&lt;-</span> student_clean <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(school_name) <span class="sc">|&gt;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">all</span>(<span class="fu">is.na</span>(net_pos))) <span class="sc">|&gt;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>student_na <span class="ot">&lt;-</span> student_clean <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">grade_level =</span> <span class="fu">case_when</span>(</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  question_int <span class="sc">%in%</span> <span class="dv">57</span><span class="sc">:</span><span class="dv">58</span> <span class="sc">~</span> <span class="st">"grades 6-8 only"</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  question_int <span class="sc">%in%</span> <span class="dv">59</span><span class="sc">:</span><span class="dv">65</span> <span class="sc">~</span> <span class="st">"grades 9-12 only"</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"all grades 6-12"</span>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(question_int, grade_level) <span class="sc">|&gt;</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">percentage_na =</span> <span class="fu">mean</span>(<span class="fu">is.na</span>(net_pos)) <span class="sc">*</span> <span class="dv">100</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'question_int'. You can override using the
+`.groups` argument.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(student_na, </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> question_int, <span class="at">y =</span> percentage_na, <span class="at">fill =</span> grade_level)) <span class="sc">+</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">65</span>, <span class="dv">5</span>)) <span class="sc">+</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">60</span>)) <span class="sc">+</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"all grades 6-12"</span> <span class="ot">=</span> <span class="st">"grey"</span>,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"grades 6-8 only"</span> <span class="ot">=</span> <span class="st">"deepskyblue"</span>,</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"grades 9-12 only"</span> <span class="ot">=</span> <span class="st">"hotpink"</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">+</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"The Percentage of Missing Responses for Each Question"</span>,</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Question Number"</span>,</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"% of School with No Response"</span>,</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"Question Audience"</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="student_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Great! Now we finally receive a cleaned dataset. There might still be a few remaining missing responses for q1-q56 that are not apparent in the bar chart, but there are too few to affect our final results, so let’s move on to analyzing our research questions.</p>
 </section>
 </section>
 </section>
