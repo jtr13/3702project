@@ -1,3 +1,6 @@
+---
+#| error: true
+---
 # NYPD Arrest Data
 
 By: Jade Amaya
