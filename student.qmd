@@ -184,3 +184,43 @@ ggplot(student_na,
 ```
 
 Great! Now we finally receive a cleaned dataset. There might still be a few remaining missing responses for q1-q56 that are not apparent in the bar chart, but there are too few to affect our final results, so let's move on to analyzing our research questions.
+
+## Results
+
+### Question 1: across New York City (NYC), which dimensions of school climate did students rate most and least positively?
+
+```{r}
+# Compute per-question and per-topic medians
+questions <- student_clean |>
+  group_by(topic, question_int) |>
+  summarise(questions_median = median(net_pos, na.rm = TRUE))
+
+topics <- questions |>
+  group_by(topic) |>
+  summarise(topics_median = median(questions_median))
+
+# Order by topic's medians
+topics <- topics |>
+  mutate(topic = fct_reorder(topic, topics_median))
+
+questions <- questions |>
+  mutate(topic = factor(topic, levels = levels(topics$topic)))
+
+# Plot the median dot plot
+ggplot(questions, aes(x = questions_median, y = topic)) +
+  geom_point(aes(color = topic), size = 2.5, alpha = 0.7) +
+  geom_point(data = topics, aes(x = topics_median, y = topic),
+             shape = 18, size = 5, color = "black") +
+  scale_x_continuous(breaks = seq(-100, 100, 20)) +
+  labs(
+    title = "NYC Student Reflection on School Climate",
+    subtitle = "dot = each questions's median; diamond = each topic's median",
+    x = "% of agreeableness",
+    y = NULL
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "none")
+```
+
+
+### Question 2: do the five boroughs differ in students' perceptions of climate, and if so, on which dimensions?
