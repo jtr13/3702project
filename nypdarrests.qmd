@@ -3,75 +3,42 @@
 By: Jade Amaya
 
 ## Introduction
-
-I was inspired to select the NYPD Arrest (Historic) Data in lieu of other courses that discuss psychology, law, and history. I'm interested in studying the demographics of people arrested in NYC, specifically their demographics. Some questions I hope to answer are: What groups of people are being arrested the most? What are the trends of arrests? What types of crimes are people arrested for? Where are most of these arrests happening? 
+I was inspired to select the NYPD Arrest (Historic) Data in lieu of other courses that discuss psychology, law, and history. I’m interested in studying the demographics of people arrested in NYC, specifically their demographics. Some questions I hope to answer are: What groups of people are being arrested the most? What are the trends of arrests? What types of crimes are people arrested for? Where are most of these arrests happening?
 
 ## Data
 
 ### Description 
-The data was collected by the NYPD and published by NYC's Open Data team.
-The data was imported, using an API from the NYPD Arrest (Year to Date) Data set.
-The dataframe contains 19 columns and 1000 rows. The data is updated every 
-year some time during mid to late April. Some limitations of this dataset is
-that by using an API, only 1000 rows can be imported at a time, there is no
-data provided that informs us whether or not these arrested people were let go,
-whether they were scheduled a trial, or whether some of these arrests pertain
-to the same individual; that some demographic information pertaining to 
-individuals are missing; and that even though these people were arrested, 
-cannot say for certain all actually committed the crime.
 
+The data was collected by the NYPD and published by NYC’s Open Data team. The data was imported, using an API from the NYPD Arrest (Year to Date) Data set. The dataframe contains 19 columns and 1000 rows. The data is updated every year some time during mid to late April. Some limitations of this dataset is that by using an API, only 1000 rows can be imported at a time, there is no data provided that informs us whether or not these arrested people were let go, whether they were scheduled a trial, or whether some of these arrests pertain to the same individual; that some demographic information pertaining to individuals are missing; and that even though these people were arrested, cannot say for certain all actually committed the crime.
 
-
-### Missing value analysis
+### Missing Value Analysis
 
 ```{r}
-#| warning: false
+#| warining: false
+#| message: false
+#| echo: false
 library(tidyverse)
-df <- read_csv("https://data.cityofnewyork.us/resource/uip8-fykc.csv", na = c("(null)", ""))
+df <- read_csv("https://data.cityofnewyork.us/resource/uip8-fykc.csv?$limit=69000", na = c("(null)", ""))
 str(df)
-
-df <- df |>
-  rename(Precinct = arrest_precinct) 
-
 ```
 
 ```{r}
 #| warning: false
 library(redav)
 df_new <- df |>
-  select(starts_with(c("perp_sex", "age", "pd_d", "k", "o", "law_")))
+  select(starts_with(c("perp_sex", "age", "pd_d", "k", "o", "law_", "pd_c")))
 colnames(df_new) <- str_remove_all(colnames(df_new), "PE")
 plot_missing(df_new)
 ```
-Most of the rows in the dataset contained no missing values. Above the graph 
-shows that the second most common pattern had sex and age group missing values.
-The third pattern included all other columns without missing values, but the level
-of defense. 
 
-
-
-
-
-
-
-
-
-
-
-
+Most of the rows in the dataset contained no missing values. Above the graph shows that the second most common pattern had sex and age group missing values. The third pattern included all other columns without missing values, but the level of defense.
 
 ## Results
 
 ### Where are arrests concentrated?
-```{r}
-library(ggplot2)
-ggplot(df, aes(x = longitude, y = latitude)) +
-  geom_point(size = 0.5, aes(color = arrest_boro)) +
-  theme_bw()
-```
-
 
 ```{r}
+#|warning: false
 library(sf)
 nybb <- st_read("nybb_26a/nybb.shp")
 
@@ -79,31 +46,26 @@ nybb <- nybb |>
   mutate(BoroCode = recode(BoroCode, `1` = "M", `2` = "B", `3` = "K",
                            '4' = "Q", '5' = "S")) |>
   rename(arrest_boro = BoroCode)
+
+df <- read_csv("https://data.cityofnewyork.us/resource/uip8-fykc.csv?$limit=69000", na = c("(null)", ""))
 ```
 
-```{r}
-boro <- left_join(nybb, df) 
 
-boro_points <- st_as_sf(boro, 
-                        coords = c("longitude", "latitide", crs = 4326))
-```
-I need help below because I'm trying to plot coordinates on the shape, but
-it's not working, even after I asked Mackenna for help
 ```{r}
-#points_sf <- boro |> 
- #select(longitude, latitude, arrest_boro) |> 
-  #na.omit() |> 
-  #st_as_sf(coords = c("longitude", "latitude"), crs = 4326) 
-#ggplot() + 
- #geom_sf(data = boro) +
-  #geom_sf(data = points_sf, size = .1)
-  #theme_minimal()
+#| message: false
+points_sf <- df |> 
+ select(longitude, latitude, arrest_boro) |> 
+  na.omit() |> 
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326) 
+ggplot() + 
+ geom_sf(data = nybb) +
+  geom_sf(data = points_sf, size = .1, aes(color = arrest_boro))
+  theme_minimal()
 ```
 
 ### What are the top crimes people are arrested for?
 
 ```{r}
-#| warning: false
 library(ggplot2)
 library(forcats)
 
@@ -115,16 +77,14 @@ ggplot(df, aes(y = law_cat_cd)) +
        y = "Offense", fill = "Race") +
   facet_wrap(vars(perp_sex)) 
 ```
+The graph represents the total counts of crime type by race, compared across gender groups, where NA was a non-specified sex. The crime codes are the following: F (felony); M (misdemeanor); V (violation); 9 (infraction).
 
-The graph represents the total counts of crime type by race, compared across 
-gender groups, where NA was a non-specified sex. 
-The crime codes are the following: F (felony); M (misdemeanor); V (violation); 
-9 (infraction).
 
-### Who are being arrested the most?
 
+
+
+### Who are being arrested?
 ```{r}
-#| warning: false
 library(ggplot2)
 library(forcats)
 ggplot(df, aes(y = perp_race)) + 
@@ -133,12 +93,18 @@ ggplot(df, aes(y = perp_race)) +
   labs(title = "Arrests in NYC by Race", x = "count", y = "Race", fill = "Sex")
 ```
 
+
 ```{r}
 library(tidyverse)
 library(sf)
 library(readxl)
 
+
+
 nypp <- read_sf("nypp_25c/nypp.shp")
+
+df <- df |>
+  rename(Precinct = arrest_precinct)
 
 newer <- left_join(nypp, df) |>
   select(c("Precinct", "perp_race", "Shape_Leng", "Shape_Area", "geometry")) |>
@@ -153,7 +119,6 @@ ggplot(newer) +
 ```
 
 ```{r}
-
 newdata <- left_join(nypp, df) |>
   select(c("Precinct", "perp_sex", "Shape_Leng", "Shape_Area", "geometry")) |>
   filter(perp_sex == "M") |>
@@ -167,12 +132,10 @@ male <- ggplot(newdata) +
    scale_fill_gradient(low = "lightblue", high = "purple",
                      na.value = "grey70") +
   theme_void() 
-
-
 ```
 
+
 ```{r}
-#| warning: false
 library(patchwork)
 
 women <- left_join(nypp, df) |>
@@ -191,8 +154,6 @@ female <- ggplot(women) +
 
 female | male
 ```
-
-
 
 ```{r}
 white <- left_join(nypp, df) |>
@@ -224,5 +185,25 @@ g2 <- ggplot(black) +
 library(patchwork)
 g1 + g2
 ```
+
+
+```{r}
+race_counts <- newer |>
+  group_by(Precinct, perp_race) |>
+  mutate(count = n()) |>
+  ungroup()
+
+prop_data <- race_counts |>
+  group_by(Precinct) |>
+  mutate(prop = count / sum(count))
+
+ggplot(prop_data) +
+  geom_sf(aes(fill = prop)) +
+  geom_sf_text(aes(label = Precinct), size = 2, color = "white") +
+  facet_wrap(~perp_race) +
+  theme_minimal()
+```
+
+
 
 ## Conclusion
