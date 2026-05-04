@@ -1,0 +1,118 @@
+# Bike New York City
+
+Dany Rosete
+
+## Introduction - CitiBike in NYC
+
+## CitiBike Data 
+
+### Description
+The CitiBike dataset contains a detailed record of bike trips within NYC. Each row represents a completed ride. With this dataset, it is useful to analyze urban mobility as it includes geographical, time-based and user type data.
+
+Here is the [link](https://citibikenyc.com/system-data) to the dataset. 
+
+#### Structure of the Dataset 
+This dataset is divided by Month directories that contain multiple `.csv` files. The complete dataset includes data from 2013 to March 2026 (as of May 3rd, 2026). 
+
+Each row corresponds to a single bike trip that has the following fields: 
+
+- Unique trip identifier (`ride_id`)
+
+- Type of trip (`rideable_type`): electric vs classic bike
+
+- Start time (`started_at`)
+
+- End time (`ended_at`)
+
+- Start station Name and identifier (`start_station_name` & `start_station_id`)
+
+- End station name and identifier (`end_station_name` & `end_station_id`)
+
+- Start Longitude & Latitude (`start_lng` & `start_lat`)
+
+- End Longitude & Latitude (`end_lng` & `end_lat`)
+
+- Type of Member (`member_casual`)
+
+This dataset includes the following disclaimer:
+"The data has been processed to remove (...) any trips that were below 60 seconds in length (potentially false starts or users trying to re-dock a bike to ensure it's secure)." 
+
+
+#### Data Manipulation 
+
+For this project, not all data will be used. Also, since .csv files are 100+ MB (exceeding the 100MB limit from Github), some files will be converted into Parquet format. 
+
+To use Parquet files, `arrow` library is needed. An R script to convert the .csv files to parquet files is found in the /scripts folder. 
+
+### Missing value analysis
+
+
+```{r}
+#| output: false
+library(arrow)
+library(ggplot2)
+library(dplyr)
+library(lubridate)
+library(scales)
+library(forcats)
+library(redav)
+```
+
+
+
+
+
+### How Weather/Seasons affect use? 
+
+```{r}
+citibike_ds <- open_dataset("data/citibike_parquet")
+
+seasonal <- citibike_ds |>
+  mutate(
+    hour = hour(started_at),
+    wday = wday(started_at),
+    month = month(started_at),
+    date = as_date(started_at)) |> 
+  count(month, wday, hour,date)|> 
+  collect() |> 
+  mutate(
+    season = case_when(
+      month %in% c(12,1,2) ~"Winter",
+      month %in% c(3,4,5) ~ "Spring",
+      month %in% c(6,7,8) ~ "Summer",
+      month %in% c(9,10,11)~ "Fall"), 
+    season = factor(season, levels = c("Winter", "Spring","Summer", "Fall")),
+    wday = factor(wday, levels = 1:7,labels = c("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"))) |>
+  group_by(season, wday, hour) |>
+  summarise(avg_rides = mean(n), .groups = "drop")
+
+ggplot(seasonal, aes(x = hour, y = fct_rev(wday), fill = avg_rides)) +
+  geom_tile(color = "white", linewidth = 0.1) +
+  facet_wrap(~season) +
+  scale_fill_viridis_c(option = "inferno") +
+  scale_x_continuous(breaks= seq(0, 23, 6),
+                     labels= paste0(seq(0, 23, 6),":00"),
+                     expand = c(0, 0)) +
+  labs(
+    title = "Citi Bike rides by season (2025-2026)",
+    x = "Hour of Day",
+    y = NULL,
+    fill = "Avgerage Rides") +
+  theme_minimal(base_size = 12) +
+  theme( legend.position  = "bottom", legend.key.width = unit(1.5, "cm"))
+```
+
+
+### Commuter or Leisure use? 
+
+
+
+
+
+### Growth in outer boroughs ? ==NOT SURE==
+
+
+## Conclusion 
+
+
+
