@@ -16,6 +16,7 @@ library(readr)
 library(dplyr)
 library(ggplot2)
 library(patchwork)
+library(tidyverse)
 
 df <- read_csv("data/nyc_restaurant_sample.csv", show_col_types = FALSE)
 
@@ -59,24 +60,52 @@ df %>%
 
 ## Results
 
-### Question 1: Which borough has the highest share of A grades?
+### Question 1: Are re-inspections associated with worse scores?
 
 ```{r}
 
-a_share <- df |>
-  filter(GRADE %in% c("A", "B", "C")) |>
-  group_by(BORO) |>
-  summarise(A_share = mean(GRADE == "A"))
-
-ggplot(a_share, aes(x = reorder(BORO, A_share), y = A_share)) +
-  geom_col(fill = "cornflowerblue") +
-  coord_flip() +
-  labs(title = "Share of A Grades by Borough", x = "Borough", y = "Proportion of A Grades") +
+df |>
+  mutate(reinspect = `INSPECTION TYPE` %in% c(
+    "Cycle / Re-inspection",
+    "Pre-permit (Operational) / Re-inspection",
+    "Pre-permit (Non-operational) / Re-inspection"
+  )) |>
+  ggplot(aes(x = reinspect, y = SCORE)) +
+  geom_boxplot() +
+  labs(
+    title = "Scores by Inspection Type",
+    x = "Re-inspection",
+    y = "Score"
+  ) +
   theme_minimal()
 
 ```
 
-### Question 2: Cuisine Types with Highest Average Inspection Scores (More Violations)
+### Question 2: Which cuisine types have the worst inspection scores?
+
+```{r}
+
+cuisine_score <- df |>
+  filter(!is.na(SCORE), !is.na(`CUISINE DESCRIPTION`)) |>
+  group_by(`CUISINE DESCRIPTION`) |>
+  summarise(
+    avg_score = mean(SCORE),
+    count = n()
+  ) |>
+  filter(count >= 20) |>
+  arrange(desc(avg_score)) |>
+  slice(1:50)
+
+ggplot(cuisine_score, aes(x = avg_score, y = reorder(`CUISINE DESCRIPTION`, avg_score))) +
+  geom_col(fill = "pink") +
+  labs(
+    title = "Cuisine Types with Worst Inspection Scores",
+    x = "Average Inspection Score",
+    y = "Cuisine Type"
+  ) +
+  theme_minimal()
+
+```
 
 ```{r}
 
@@ -99,20 +128,6 @@ ggplot(cuisine_score_box, aes(x = SCORE, y = reorder(`CUISINE DESCRIPTION`, SCOR
   labs(
     title = "Inspection Score Distribution by Cuisine Type", 
     x = "Inspection Score", 
-    y = "Cuisine Type"
-  ) +
-  theme_minimal()
-
-```
-### Another version of Q2
-
-```{r}
-
-ggplot(cuisine_score_box, aes(x = SCORE, y = reorder(`CUISINE DESCRIPTION`, SCORE))) +
-  geom_boxplot() +
-  labs(
-    title = "Inspection Score Distribution by Cuisine Type",
-    x = "Inspection Score",
     y = "Cuisine Type"
   ) +
   theme_minimal()
