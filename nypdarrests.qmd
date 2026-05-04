@@ -1,5 +1,6 @@
 ---
-#| error: true
+execute:
+  error: true
 ---
 # NYPD Arrest Data
 
