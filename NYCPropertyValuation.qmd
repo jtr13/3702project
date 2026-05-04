@@ -6,7 +6,7 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 
 Abisola Sajuyigbe
 
-## 9.1. Introduction
+## Introduction
 
 This project, devised from an interest in financial risk assessments, will explore New York City's Property Valuation and Assessment Data. This chapter displays the exploratory data analysis and visualization of the City's financial evaluations that determine tax revenues. Property assessments determine tax revenues, this identifying gaps between assessed property value and its market value is an important fiscal concern.
 
@@ -22,7 +22,7 @@ This chapter will engage with the following key questions:
 
 4.  How does the valuation gap vary by tax classification and borough?
 
-## 9.2. Data
+## Data
 
 ```{r}
 #| message: false
@@ -96,7 +96,7 @@ PVA_tidy <- PVA_stratified %>%
 str(PVA_tidy)
 ```
 
-### 9.2.1 Description
+### Description
 
 The data used in this study is the NYC Property Valuation and Assessment Data, collected by the City government's Department of Finance (DoF), and sourced from [NYC Open Data](https://data.cityofnewyork.us/City-Government/Property-Valuation-and-Assessment-Data/yjxr-fw8i/about_data). It contains property valuation and assessment data for 9.85 million New York City properties, with a collection of 40 variables.
 
@@ -163,7 +163,7 @@ The research conducted in this chapter is targeted, using a "tidied" version of 
 
 The data dictionary used to define the variables was incomplete, requiring further outside research on property and real estate terminology and classifications.
 
-### 9.2.2 Missing value analysis
+### Missing value analysis
 
 ```{r}
 library(redav)
@@ -201,9 +201,9 @@ ggplot(missing_data,
 
 Figure 2. The Missingness by Borough and Property Type Plot indicates that Commercial & All Other properties have the lowest amount of missing data (roughly 80-85%), suggesting that these commercial properties have more recorded tax breaks than residential properties across all five boroughs. Besides that, Manhattan's Single-Family Home bar is missing, reflecting the reality that there are not many existing single family homes in Manhattan.
 
-## 9.3. Results
+## Results
 
-### 9.3.1 Tax Exemption Total and Market Values
+### Tax Exemption Total and Market Values
 
 ```{r}
 library(scales)
@@ -244,7 +244,7 @@ PVA_tidy %>%
 
 Figure 4. The ridge-line plot illustrates the association between tax programs and full property market values. The veterans category is clustered toward the bottom left, suggesting that veteran tax programs are associated with properties with the lower market values (likely residential homes). Meanwhile, federal and public authorities, peak towards the right, meaning they have higher valuations. Categories with longer tails reflect the diversity in property market value of those agencies.
 
-### 9.3.2 Tax Classifications and Market Value
+### Tax Classifications and Market Value
 
 ```{r}
 
@@ -286,7 +286,7 @@ PVA_tidy %>%
 
 Figure 6. The ridge-line plot reveals that the distribution for utility properties are multimodal with three distinct peaks and a wide spread. There are likely three major types of utility properties. Vacant Land (Residential) and Condos (in 1-3 unit buildings) are bimodal with 2 peaks, suggesting two leading types of land properties. Commercial & All Other properties has a weak peak and long tails, with a median market value around \$500-700k, highlighting that the distribution is influenced by outliers.
 
-### 9.3.3 Market Value and Tax Exemption by Borough
+### Market Value and Tax Exemption by Borough
 
 ```{r}
 # Figure 7. Cleveland Dot Plot
@@ -316,7 +316,7 @@ boro_stats %>%
 
 Figure 7. The Cleveland Dot Plot confirms Manhattan properties have the greatest median market value, in comparison to all the other New York City boroughs. Meanwhile, Queens properties have the lowest median market value in comparison to all the other New York City boroughs.
 
-### 9.3.4 Risk by Tax Classification and Borough
+### Risk by Tax Classification and Borough
 
 ```{r}
 #---------------------------CALCULATING THE VALUATION GAP---------------------------------
@@ -359,7 +359,7 @@ ggplot(PVA_ratio, aes(x = taxcl_code, y = assessment_ratio, fill = taxcl_code)) 
 
 Figure 8. This graph was generated using a calculated assessment ratio, or the portion of a property's market value (Market Value - `fullval`) that the city decides to tax (Assessed Total - `avtot`). The devised formula for the assessment ratio is $$avtot/fullval$$. It displays dashed lines at the 6% and 45% Assessment Ratio mark. These represent New York City's target assessment ratio for residential homes and all other properties, respectively. When the assessment ratio is lower than the target, or dashed line, there is a valuation gap, meaning that the property based on its market value is under-taxed. Across all boroughs, the assessment ratios for 1-3 unit residential properties are consistently below the 6% benchmark, suggesting a valuation gap. Additionally, for 4+ unit residential properties, the assessment ratios across all boroughs are consistently below the 45% benchmark, suggesting a valuation gap. It is evident there is model risk in the city's taxation of properties and their market value, which are under-assessed.
 
-## 9.4. Conclusion
+## Conclusion
 
 This analysis reveals that New York City's property tax system and valuation assessments are generally consistent with real estate frameworks. However, there are model risks evident in the identified valuation gaps across different tax classifications and boroughs.
 
