@@ -9,8 +9,19 @@ book:
   repo-branch: main
   repo-actions: [source, edit, issue]
   chapters:
+    - index.qmd
+    - affordablehousing.qmd
+    - nyc_shelter_census.qmd
+    - nypdarrests.qmd
+    - nyc_restaurant_data_analysis.qmd
+    - NYCPropertyValuation.qmd
+    - 2015trees.qmd
+    - student.qmd
+    - nyc-citibikes.qmd
+    - MTASubwayData.qmd
     - food.qmd
-    
+    - instructions.qmd
+
   
 format:
   html:

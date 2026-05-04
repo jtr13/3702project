@@ -1,0 +1,200 @@
+# NYC Subway Ridership and Delays
+
+## Introduction
+
+The New York City subway is one of the most iconic and heavily used public transit systems in the world, serving millions of riders across five boroughs every single day. As a city that never sleeps, the subway operates 24/7 and is the backbone of how New Yorkers get around — whether commuting to work, visiting friends, or exploring the city. In this project, I explore two key aspects of the NYC subway system: ridership patterns and service delays. Specifically, I am interested in understanding when and where people ride the subway, how payment methods have shifted with the introduction of OMNY (the new tap-to-pay system), and which subway lines suffer the most delays and why. These questions matter because they shed light on how millions of New Yorkers experience public transit on a daily basis.
+
+## Data
+
+### Description
+
+This project uses two datasets, both publicly available through New York State's open data portal. The first is the [MTA Subway Hourly Ridership dataset](https://data.ny.gov/Transportation/MTA-Subway-Hourly-Ridership-2020-2024/wujg-7c2s), which records the number of riders entering each subway station complex every hour, broken down by payment method and fare class category. The data includes station name, borough, latitude and longitude coordinates, and ridership counts. Due to the large size of this dataset — over 4GB for the full 2020–2024 period — this analysis focuses on one week of data from January 1–7, 2024, resulting in approximately 556,000 rows. The second dataset is the [MTA Subway Delay-Causing Incidents dataset](https://data.ny.gov/Transportation/MTA-Subway-Delay-Causing-Incidents-Beginning-2020/g937-7k7c), which records monthly delay counts by subway line, day type (weekday vs. weekend), and reporting category (the cause of the delay). This dataset covers all of 2024 and is much smaller at 2,876 rows. One known issue with the ridership data is that a small number of rows contain missing or non-numeric ridership values, which were handled using `na.rm = TRUE` throughout.
+
+## Missing Value Analysis
+
+## Results
+
+```{r}
+library(tidyverse)
+ridership <- read.csv("data/mta_hourly_ridership.csv") |>
+  mutate(
+    transit_timestamp = mdy_hms(transit_timestamp),
+    hour = hour(transit_timestamp),
+    day = wday(transit_timestamp, label = TRUE, abbr = TRUE),
+    day_type= ifelse(wday(transit_timestamp) %in% c(1,7), "Weekend", "Weekday"),
+    ridership = as.numeric(ridership)
+  )
+```
+
+### When Do New Yorks Ride the Subway?
+
+```{r}
+#Graph 1 - Ridership over time (wihtin one week)
+hourly_avg <- ridership |>
+  group_by(hour, day_type) |>
+  summarise(avg_ridership = mean(ridership, na.rm = TRUE))
+
+ggplot(hourly_avg, aes(x=hour, y = avg_ridership, color = day_type))+
+  geom_line()+
+  geom_point(size = 2)+
+  scale_x_continuous(breaks = seq(0,23, 3), 
+                     labels = c("12am", "3am", "6am", "9am",
+                                "12pm", "3pm", "6pm", "9pm")) +
+  scale_color_manual(values = c("Weekday" = "darkblue", "Weekend" = "orange"))+
+  labs(
+    title = "NYC Subway Ridership by Hour of Day",
+    subtitle = "Week of January 1-7, 2024",
+    x = "Hour",
+    y = "Average Riders per Station",
+  )+
+  theme_minimal()+
+  theme(legend.title = element_blank())
+```
+
+The hourly ridership line chart reveals a clear and intuitive pattern: weekday ridership follows a classic double-peak shape, with a sharp morning rush hour around 8am and an evening peak around 5-6pm. Weekend ridership, by contrast, is lower overall and more evenly distributed throughout the day, peaking in the early afternoon. This reflects the commuter-driven nature of weekday subway use versus the more leisure-oriented weekend ridership.
+
+```{r}
+ridership |>
+  group_by(station_complex)|>
+  summarise(total = sum(ridership, na.rm = TRUE)) |>
+  slice_max(total, n = 6)
+
+top6 <- c("Times Sq-42 St (N,Q,R,W,S,1,2,3,7)/42 St (A,C,E)",
+          "Flushing-Main St (7)",
+          "74-Broadway (7)/Jackson Hts-Roosevelt Av (E,F,M,R)",
+          "Grand Central-42 St (S,4,5,6,7)",
+          "34 St-Herald Sq (B,D,F,M,N,Q,R,W)",
+          "14 St-Union Sq (L,N,Q,R,W,4,5,6)")
+
+top6_data <- ridership |>
+  filter(station_complex %in% top6) |>
+  group_by(station_complex, hour, day) |>
+  summarise(avg_ridership = mean(ridership, na.rm = TRUE))
+
+ggplot(top6_data, aes(x= hour, y = avg_ridership, color = day))+
+  geom_line()+
+  facet_wrap(~station_complex, labeller = label_wrap_gen(25))+
+   scale_x_continuous(breaks = seq(0,23, 3), 
+                     labels = c("12am", "3am", "6am", "9am",
+                                "12pm", "3pm", "6pm", "9pm"))+
+  scale_color_manual(values = c(
+  "Mon" = "#08306b",
+  "Tue" = "#2171b5",
+  "Wed" = "#4292c6",
+  "Thu" = "#6baed6",
+  "Fri" = "#bdd7e7",
+  "Sat" = "#d6604d",
+  "Sun" = "#f4a582"
+))+
+  labs(
+    title = "Hourly Ridership Patterns at NYC's 6 Busiest Stations",
+    x = "Hour",
+    y = "Average Riders"
+  )
+```
+
+Looking at the top 6 busiest stations, we see that this pattern holds across major hubs like Times Square and Grand Central, though with some interesting differences. Flushing-Main St, which serves a large residential and commercial area in Queens, shows a notably different profile compared to Manhattan stations — suggesting that outer borough riders use the subway differently than those in the city center. Saturday and Sunday lines (shown in red/orange) consistently sit below the weekday lines (blue) at rush hours but converge or even exceed them during midday hours.
+
+```{r}
+ggplot(ridership, aes(x=ridership, fill = day))+
+  geom_density(alpha = 0.5)+
+  facet_wrap(~day)+
+  scale_x_log10(labels = scales::comma)
+```
+
+### Where is Ridership Concentrated?
+
+```{r}
+library(sf)
+nyc <- st_read("data/nybb.shp")
+nyc <- st_transform(nyc, crs = 4326)
+
+station_total <- ridership |>
+  group_by(station_complex, latitude, longitude)|>
+  summarise(total_ridership = sum(ridership, na.rm = TRUE))|>
+  mutate(
+    latitude = as.numeric(latitude),
+    longitude = as.numeric(longitude)
+  )
+
+ggplot()+
+  geom_sf(data = nyc, )+
+  geom_point(data = station_total, aes(x= longitude, y = latitude, size = total_ridership),
+             alpha = .1, color = "black")+
+  labs(
+    x = NULL,
+    y = NULL
+  )+
+  theme_minimal()+
+  theme(legend.position = "none")
+
+```
+
+### How Are Riders Paying?
+
+```{r}
+fare_totals <- ridership |>
+  group_by(fare_class_category) |>
+  summarise(total_riders = sum(ridership, na.rm = TRUE))
+
+ggplot(fare_totals, aes(x= total_riders,
+                        y= reorder(fare_class_category, total_riders),
+                        fill = fare_class_category))+
+  geom_bar(stat = "identity")+
+  scale_x_continuous(labels = scales::comma)+
+  labs(
+    x = "Total Riders",
+    y = NULL
+  )+
+  scale_fill_manual(values = c(
+  "OMNY - Full Fare"              = "#08306b",
+  "OMNY - Seniors & Disability"   = "#2171b5",
+  "OMNY - Other"                  = "#6baed6",
+  "Metrocard - Full Fare"         = "#d73027",
+  "Metrocard - Unlimited 7-Day"   = "#f46d43",
+  "Metrocard - Unlimited 30-Day"  = "#fdae61",
+  "Metrocard - Students"          = "#fee090",
+  "Metrocard - Other"             = "#d9ef8b",
+  "Metrocard - Seniors & Disability" = "#a6d96a",
+  "Metrocard - Fair Fare"         = "#66bd63"
+  ))+
+  theme(legend.position = "none")
+```
+
+The fare type bar chart reveals a striking finding: OMNY Full Fare is by far the most common payment method, surpassing even the traditional Metrocard Full Fare. This suggests that New Yorkers have adopted the tap-to-pay OMNY system rapidly since its introduction. Metrocard unlimited passes (7-day and 30-day) remain popular, reflecting the habits of frequent commuters. Discounted fare categories — students, seniors, and Fair Fare (a program for low-income riders) — make up a smaller share.
+
+### What Is Causing Subway Delays?
+
+```{r}
+delays <- read_csv("data/MTA_Subway_Trains_Delayed__Beginning_2020_20260502.csv")
+
+cause_totals <- delays |>
+  group_by(line, reporting_category) |>
+  summarise(total_delays = sum(delays, na.rm = TRUE))
+
+ggplot(cause_totals, aes( x = total_delays,y=reorder(line, total_delays), fill = reporting_category))+
+  geom_bar(stat = "identity")+
+  scale_x_continuous(labels = scales::comma)+
+    labs(
+    x = "Total Delays",
+    y = "Subway Line",
+    fill = "Delay Cause"
+  )+
+  scale_fill_manual(values = c(
+  "Infrastructure & Equipment" = "#d73027",
+  "Police & Medical"           = "#4575b4",
+  "Operating Conditions"       = "#fdae61",
+  "Crew Availability"          = "#74add1",
+  "Planned ROW Work"           = "#fee090",
+  "External Factors"           = "#abd9e9"
+  ))+
+  theme_minimal()+
+  theme(legend.position = "bottom")
+  
+```
+
+The stacked bar chart shows that lines 6, F, and N are the most delayed in 2024, each exceeding 35,000 incidents. Surprisingly, Police & Medical incidents (dark blue) are the leading cause of delays across nearly every line — not infrastructure failures as one might expect. Infrastructure & Equipment (red) is the second largest contributor, reflecting the well-known aging of the NYC subway. Shuttle lines S Rock, S 42nd, and S Fkln have negligible delays given their limited routes.
+
+## Conclusion 
+
+This exploration of NYC subway data reveals that ridership is strongly shaped by the workweek, with clear rush hour peaks on weekdays and a more relaxed weekend pattern. OMNY has rapidly overtaken the Metrocard as the dominant payment method, and ridership is heavily concentrated in Manhattan. Delays are driven more by Police and Medical incidents than infrastructure failures, which was unexpected. A key limitation is that the ridership data covers only one week in January, which may not represent the full year. Future work could explore seasonal patterns and borough-level equity in transit access.
