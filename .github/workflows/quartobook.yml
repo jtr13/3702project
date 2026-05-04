@@ -11,7 +11,7 @@ name: quarto
 jobs:
   build-deploy:
     # Uncomment if you don't want this action to run on forks
-    # if: github.event.repository.fork != true
+    if: github.event.repository.fork != true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -24,6 +24,8 @@ jobs:
 
       - name: setup dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::sf
 
       - name: Deploy 🚀
         uses: quarto-dev/quarto-actions/publish@v2

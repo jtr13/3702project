@@ -10,9 +10,15 @@ book:
   repo-actions: [source, edit, issue]
   chapters:
     - index.qmd
+    - affordablehousing.qmd
+    - nyc_shelter_census.qmd
+    - nypdarrests.qmd
+    - nyc_restaurant_data_analysis.qmd
+    - NYCPropertyValuation.qmd
+    - 2015trees.qmd
     - student.qmd
     - instructions.qmd
-
+    
   
 format:
   html:
@@ -28,7 +34,6 @@ execute:
   echo: true
   warning: false
   message: false
-  error: true
 
 editor: source
 

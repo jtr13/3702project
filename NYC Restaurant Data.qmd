@@ -1,0 +1,148 @@
+# NYC Restaurant Inspection Analysis
+
+Charlene
+
+## Introduction
+
+
+## Data
+### Description
+
+
+
+```{r}
+
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(patchwork)
+
+df <- read_csv("data/nyc_restaurant_sample.csv", show_col_types = FALSE)
+
+head(df)
+
+```
+
+### Missing value analysis
+
+#### Missing Values by Variable
+
+* Analyses involving grades or scores should be interpreted with caution, as missing data may introduce bias into the results.
+
+```{r}
+
+missing_count <- data.frame(variable = names(df), missing = colSums(is.na(df)))
+
+ggplot(missing_count, aes(x = reorder(variable, missing), y = missing)) +
+  geom_col() +
+  coord_flip() +
+  labs(title = "Missing Values by Variable", x = "Variable", y = "Number of Missing Values") +
+  theme_minimal()
+
+```
+
+#### Missing Grade by Inspection Type
+
+* It seems that missing values in the GRADE variable are not random. Instead, they depend on the type of inspection. For example, categories like administrative or compliance inspections almost always have missing grades, which likely means that a grade is not assigned in those cases. On the other hand, initial and cycle inspections are more likely to have a recorded grade. This suggests that whether a grade appears in the data depends more on the inspection process itself rather than just data quality issues.
+
+```{r}
+
+df %>%
+  mutate(grade_missing = is.na(GRADE)) %>%
+  count(`INSPECTION TYPE`, grade_missing) %>%
+  ggplot(aes(x = `INSPECTION TYPE`, y = n, fill = grade_missing)) +
+  geom_col(position = "fill") +
+  coord_flip() +
+  theme_minimal()
+
+```
+
+## Results
+
+### Question 1: Which borough has the highest share of A grades?
+
+```{r}
+
+a_share <- df |>
+  filter(GRADE %in% c("A", "B", "C")) |>
+  group_by(BORO) |>
+  summarise(A_share = mean(GRADE == "A"))
+
+ggplot(a_share, aes(x = reorder(BORO, A_share), y = A_share)) +
+  geom_col(fill = "cornflowerblue") +
+  coord_flip() +
+  labs(title = "Share of A Grades by Borough", x = "Borough", y = "Proportion of A Grades") +
+  theme_minimal()
+
+```
+
+### Question 2: Cuisine Types with Highest Average Inspection Scores (More Violations)
+
+```{r}
+
+cuisine_score_box <- df |>
+  filter(!is.na(SCORE), !is.na(`CUISINE DESCRIPTION`)) |>
+  group_by(`CUISINE DESCRIPTION`) |>
+  filter(n() >= 20) |>
+  ungroup()
+
+top_cuisine <- cuisine_score_box |>
+  count(`CUISINE DESCRIPTION`, sort = TRUE) |>
+  slice(1:12)
+
+cuisine_score_box <- cuisine_score_box |>
+  filter(`CUISINE DESCRIPTION` %in% top_cuisine$`CUISINE DESCRIPTION`)
+
+ggplot(cuisine_score_box, aes(x = SCORE, y = reorder(`CUISINE DESCRIPTION`, SCORE))) +
+  geom_boxplot(outlier.shape = NA) +
+  coord_cartesian(xlim = c(0, 80)) +
+  labs(
+    title = "Inspection Score Distribution by Cuisine Type", 
+    x = "Inspection Score", 
+    y = "Cuisine Type"
+  ) +
+  theme_minimal()
+
+```
+### Another version of Q2
+
+```{r}
+
+ggplot(cuisine_score_box, aes(x = SCORE, y = reorder(`CUISINE DESCRIPTION`, SCORE))) +
+  geom_boxplot() +
+  labs(
+    title = "Inspection Score Distribution by Cuisine Type",
+    x = "Inspection Score",
+    y = "Cuisine Type"
+  ) +
+  theme_minimal()
+
+```
+
+### Question 3: Are restaurant inspection grades geographically clustered?
+
+```{r}
+
+location_grade <- df |>
+  filter(
+    !is.na(Longitude),
+    !is.na(Latitude),
+    Longitude != 0,
+    Latitude != 0,
+    GRADE %in% c("A", "B", "C")
+  )
+
+ggplot(location_grade, aes(x = Longitude, y = Latitude, color = GRADE)) +
+  geom_point(alpha = 0.5, size = 1) +
+  labs(
+    title = "Restaurant Locations by Inspection Grade",
+    x = "Longitude",
+    y = "Latitude",
+    color = "Grade"
+  ) +
+  theme_minimal()
+
+```
+
+
+## Conclusion
