@@ -14,6 +14,7 @@ book:
     - nyc_shelter_census.qmd
     - nypdarrests.qmd
     - nyc_restaurant_data_analysis.qmd
+    - NYCPropertyValuation.qmd
     - instructions.qmd
     
   
