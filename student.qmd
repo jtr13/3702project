@@ -250,6 +250,8 @@ borough_topic <- borough_topic |> mutate(
   borough = factor(borough, levels = boroughs)
 )
 
+boroughs
+
 # Plot the heatmap
 ggplot(borough_topic, 
        aes(x = borough, y = topic, fill = bor_top_median)) +
@@ -273,3 +275,35 @@ ggplot(borough_topic,
   )
 ```
 
+
+### Question 3: do the survey response rates correlate with how positively students rate their schools?
+
+```{r}
+# Aggregate by school
+school_avg <- student_clean |>
+  group_by(school_name, borough, response_rate) |>
+  summarise(pos_avg = mean(net_pos, na.rm = TRUE)) |>
+  filter(!is.na(pos_avg))
+
+# Factor in borough level (not necessary, just for better visualization)
+school_avg <- school_avg |>
+  mutate(borough = factor(borough, levels = boroughs))
+
+# Compute the correlation
+corr <- cor(school_avg$response_rate, school_avg$pos_avg)
+
+# Plot the correlation graph
+ggplot(school_avg, aes(x = response_rate, y = pos_avg)) +
+  geom_point(aes(color = borough), alpha = 0.5, size = 1.5) +
+  geom_smooth(method = "lm", color = "black", linewidth = 0.8) +
+  labs(
+    title = sprintf("Survery Response Rate vs Average School Climate Rating in NYC (r = %.2f)", corr),
+    x = "Survey Response Rate (in %)",
+    y = "Average Climate Rating (in %)",
+    color = "Borough"
+  ) +
+  theme_minimal(base_size = 11)
+```
+
+
+## Conclusion
