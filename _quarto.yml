@@ -19,8 +19,9 @@ book:
     - student.qmd
     - nyc-citibikes.qmd
     - MTASubwayData.qmd
+    - food.qmd
     - instructions.qmd
-    
+
   
 format:
   html:
