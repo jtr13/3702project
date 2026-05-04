@@ -57,7 +57,7 @@ data |> filter (Year == "2025") |> group_by(BoroName) |>
   ggplot(aes(x = food_insecurity, y = reorder(BoroName, food_insecurity, median))) +
   geom_boxplot() +
   ggtitle("Food Insecurity by Borough") +
-  labs(y = "Food Insecurity Score, x = "Borough")
+  labs(y = "Food Insecurity Score", x = "Borough")
 
 housing <- read.csv("data/Food/Housing_Database_by_2020_NTA_20260504.csv")
 housing <- housing |> select(c(2:23)) 
