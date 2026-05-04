@@ -18,11 +18,9 @@ Here is a link to the dataset: [link](https://data.cityofnewyork.us/Public-Safet
 
 ```{r}
 #| warining: false
-#| message: false
 #| echo: false
 library(tidyverse)
 df <- read_csv("https://data.cityofnewyork.us/resource/uip8-fykc.csv?$limit=69000", na = c("(null)", ""))
-str(df)
 ```
 
 ```{r}
