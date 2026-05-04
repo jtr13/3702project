@@ -11,6 +11,8 @@ I was inspired to select the NYPD Arrest (Historic) Data in lieu of other course
 
 The data was collected by the NYPD and published by NYC’s Open Data team. The data was imported, using an API from the NYPD Arrest (Year to Date) Data set. The dataframe contains 19 columns and 1000 rows. The data is updated every year some time during mid to late April. Some limitations of this dataset is that by using an API, only 1000 rows can be imported at a time, there is no data provided that informs us whether or not these arrested people were let go, whether they were scheduled a trial, or whether some of these arrests pertain to the same individual; that some demographic information pertaining to individuals are missing; and that even though these people were arrested, cannot say for certain all actually committed the crime.
 
+Here is a link to the dataset <https://data.cityofnewyork.us/Public-Safety/NYPD-Arrest-Data-Year-to-Date-/uip8-fykc/about_data>
+
 ### Missing Value Analysis
 
 ```{r}
