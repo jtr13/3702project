@@ -16,6 +16,7 @@ book:
     - nyc_restaurant_data_analysis.qmd
     - NYCPropertyValuation.qmd
     - 2015trees.qmd
+    - student.qmd
     - instructions.qmd
     
   
