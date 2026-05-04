@@ -63,7 +63,17 @@ ggplot() +
   theme_minimal()
 ```
 
-### What are the top crimes people are arrested for?
+### What are the top crimes people are allegedly arrested for?
+
+```{r}
+ggplot(df, aes(y = fct_rev(fct_infreq(law_cat_cd)), fill = law_cat_cd)) + 
+  geom_bar() +
+ scale_fill_brewer(palette = "Set2") +
+  theme_minimal() +
+  labs(title = "Arrests by Crime Type",
+       x = "Count",
+       y = "Offense")
+```
 
 ```{r}
 library(ggplot2)
@@ -72,15 +82,16 @@ library(forcats)
 ggplot(df, aes(y = law_cat_cd)) + 
   geom_bar(aes(y = fct_rev(fct_infreq(law_cat_cd)), fill = perp_race)) +
   theme_minimal() +
-  scale_color_manual() +
+ scale_fill_brewer(palette = "Set1") +
   labs(title = "Arrests in NYC by Crime", x = "count", 
-       y = "Offense", fill = "Race") +
-  facet_wrap(vars(perp_sex)) 
+       y = "Offense", fill = "Race")
 ```
+
+
 
 The graph represents the total counts of crime type by race, compared across gender groups, where NA was a non-specified sex. The crime codes are the following: F (felony); M (misdemeanor); V (violation); 9 (infraction).
 
-### Who are being arrested?
+### Who is being disproportionately arrested?
 
 ```{r}
 library(ggplot2)
@@ -88,8 +99,14 @@ library(forcats)
 ggplot(df, aes(y = perp_race)) + 
   geom_bar(aes(y = fct_rev(fct_infreq(perp_race)), fill = perp_sex)) +
   theme_minimal() +
-  labs(title = "Arrests in NYC by Race", x = "count", y = "Race", fill = "Sex")
+  labs(title = "Arrests in NYC by Race and Gender", x = "count", y = "Race", fill = "Sex")
 ```
+The graph above presents a bar graph of the distribution of arrests by race,
+each broken up by gender. People who identify as black are substantively
+arrested more than people who identify as another race, with white hispanics
+as the second highest arrested racial group. Within each racial
+category, people who identify as males are also arrested at substantively
+greater rate than people who identify as females.
 
 ```{r}
 library(tidyverse)
@@ -126,7 +143,7 @@ male <- ggplot(newdata) +
   geom_sf(aes(fill = Male)) + 
   geom_sf_text(aes(label = Precinct), size = 2,
                color = "white") +
-   scale_fill_gradient(low = "lightblue", high = "purple",
+   scale_fill_gradient(low = "darkblue", high = "lightblue",
                      na.value = "grey70") +
   theme_void() 
 ```
@@ -144,12 +161,23 @@ female <- ggplot(women) +
   geom_sf(aes(fill = Female)) + 
   geom_sf_text(aes(label = Precinct), size = 2,
                color = "white") +
-   scale_fill_gradient(low = "lightblue", high = "purple",
+   scale_fill_gradient(low = "darkblue", high = "lightblue",
                      na.value = "grey70") +
   theme_void()
 
 female | male
 ```
+At a glance, the maps look similar when comparing male and female arrestees
+across precincts. However, we already established that males arrests were
+substantively larger than the amount of female arrests.
+However, if you look at the colors, you can see they are similar 
+in color, which may suggest there is some sort of underlying pattern beyond
+gender. In other words, there is not a strong association between gender and location,
+because it looks like both male and females are arrested at higher rates in
+certain precincts. Maybe there is some other variable that can explain why
+within the precincts that are lighter result in higher arrest counts of each
+gender.
+
 
 ```{r}
 white <- left_join(nypp, df) |>
@@ -170,12 +198,14 @@ g1 <- ggplot(white) +
   geom_sf(aes(fill = white_count)) + 
   geom_sf_text(aes(label = Precinct), size = 2,
                color = "white")  +
+  labs(fill = "White Arrestees") +
   theme_void()
 
 g2 <- ggplot(black) +
   geom_sf(aes(fill = black_count)) + 
   geom_sf_text(aes(label = Precinct), size = 2,
                color = "white")  +
+  labs(fill = "Black Arrestees") +
   theme_void()
 
 library(patchwork)
@@ -193,6 +223,16 @@ prop_data <- race_counts |>
   mutate(prop = count / sum(count))
 
 ggplot(prop_data) +
+  geom_sf(aes(fill = prop)) +
+  geom_sf_text(aes(label = Precinct), size = 2, color = "white") +
+  facet_wrap(~perp_race) +
+  theme_minimal()
+
+
+filtered_data <- prop_data |> 
+  filter(perp_race %in% c("WHITE", "BLACK"))
+
+ggplot(filtered_data) +
   geom_sf(aes(fill = prop)) +
   geom_sf_text(aes(label = Precinct), size = 2, color = "white") +
   facet_wrap(~perp_race) +
