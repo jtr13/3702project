@@ -3,15 +3,16 @@
 By: Jade Amaya
 
 ## Introduction
+
 I was inspired to select the NYPD Arrest (Historic) Data in lieu of other courses that discuss psychology, law, and history. I’m interested in studying the demographics of people arrested in NYC, specifically their demographics. Some questions I hope to answer are: What groups of people are being arrested the most? What are the trends of arrests? What types of crimes are people arrested for? Where are most of these arrests happening?
 
 ## Data
 
-### Description 
+### Description
 
 The data was collected by the NYPD and published by NYC’s Open Data team. The data was imported, using an API from the NYPD Arrest (Year to Date) Data set. The dataframe contains 19 columns and 1000 rows. The data is updated every year some time during mid to late April. Some limitations of this dataset is that by using an API, only 1000 rows can be imported at a time, there is no data provided that informs us whether or not these arrested people were let go, whether they were scheduled a trial, or whether some of these arrests pertain to the same individual; that some demographic information pertaining to individuals are missing; and that even though these people were arrested, cannot say for certain all actually committed the crime.
 
-Here is a link to the dataset <https://data.cityofnewyork.us/Public-Safety/NYPD-Arrest-Data-Year-to-Date-/uip8-fykc/about_data>
+Here is a link to the dataset: [link](https://data.cityofnewyork.us/Public-Safety/NYPD-Arrest-Data-Year-to-Date-/uip8-fykc/about_data)
 
 ### Missing Value Analysis
 
@@ -52,7 +53,6 @@ nybb <- nybb |>
 df <- read_csv("https://data.cityofnewyork.us/resource/uip8-fykc.csv?$limit=69000", na = c("(null)", ""))
 ```
 
-
 ```{r}
 #| message: false
 points_sf <- df |> 
@@ -79,13 +79,11 @@ ggplot(df, aes(y = law_cat_cd)) +
        y = "Offense", fill = "Race") +
   facet_wrap(vars(perp_sex)) 
 ```
+
 The graph represents the total counts of crime type by race, compared across gender groups, where NA was a non-specified sex. The crime codes are the following: F (felony); M (misdemeanor); V (violation); 9 (infraction).
 
-
-
-
-
 ### Who are being arrested?
+
 ```{r}
 library(ggplot2)
 library(forcats)
@@ -94,7 +92,6 @@ ggplot(df, aes(y = perp_race)) +
   theme_minimal() +
   labs(title = "Arrests in NYC by Race", x = "count", y = "Race", fill = "Sex")
 ```
-
 
 ```{r}
 library(tidyverse)
@@ -135,7 +132,6 @@ male <- ggplot(newdata) +
                      na.value = "grey70") +
   theme_void() 
 ```
-
 
 ```{r}
 library(patchwork)
@@ -188,7 +184,6 @@ library(patchwork)
 g1 + g2
 ```
 
-
 ```{r}
 race_counts <- newer |>
   group_by(Precinct, perp_race) |>
@@ -205,7 +200,5 @@ ggplot(prop_data) +
   facet_wrap(~perp_race) +
   theme_minimal()
 ```
-
-
 
 ## Conclusion
