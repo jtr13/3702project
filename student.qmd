@@ -224,3 +224,52 @@ ggplot(questions, aes(x = questions_median, y = topic)) +
 
 
 ### Question 2: do the five boroughs differ in students' perceptions of climate, and if so, on which dimensions?
+
+```{r}
+# Aggregate by borough and topic
+borough_topic <- student_clean |>
+  group_by(borough, topic) |>
+  summarise(bor_top_median = median(net_pos, na.rm = TRUE))
+
+# Order topics by their median
+topics <- borough_topic |>
+  group_by(topic) |>
+  summarise(top_median = median(bor_top_median)) |>
+  arrange(top_median) |>
+  pull(topic)
+
+# Order boroughs by their cross-topic median
+boroughs <- borough_topic |>
+  group_by(borough) |>
+  summarise(bor_median = median(bor_top_median)) |>
+  arrange(bor_median) |>
+  pull(borough)
+
+borough_topic <- borough_topic |> mutate(
+  topic = factor(topic, levels = topics),
+  borough = factor(borough, levels = boroughs)
+)
+
+# Plot the heatmap
+ggplot(borough_topic, 
+       aes(x = borough, y = topic, fill = bor_top_median)) +
+  geom_tile() +
+  scale_fill_gradient2(
+    low = "hotpink",
+    mid = "grey",
+    high = "limegreen",
+    midpoint = 50,
+    name = "median % of agreeableness"
+  ) +
+  labs(
+    title = "NYC School Climate Ratings by Borough and Topic",
+    x = NULL,
+    y = NULL
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    panel.grid = element_blank(),
+    axis.text.x = element_text(angle = 30, hjust = 1)
+  )
+```
+
