@@ -1,14 +1,10 @@
----
-output: html_document
-editor_options: 
-  chunk_output_type: console
----
-
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 ```
 
 # NYC's Property Valuation and Assessment
+
+Abisola Sajuyigbe
 
 ## 9.1. Introduction
 
