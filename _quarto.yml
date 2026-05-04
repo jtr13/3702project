@@ -18,6 +18,7 @@ book:
     - 2015trees.qmd
     - student.qmd
     - nyc-citibikes.qmd
+    - MTASubwayData.qmd
     - instructions.qmd
     
   
