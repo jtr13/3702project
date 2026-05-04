@@ -10,6 +10,7 @@ book:
   repo-actions: [source, edit, issue]
   chapters:
     - index.qmd
+    - student.qmd
     - instructions.qmd
 
   
