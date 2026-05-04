@@ -61,7 +61,7 @@ points_sf <- df |>
   st_as_sf(coords = c("longitude", "latitude"), crs = 4326) 
 ggplot() + 
  geom_sf(data = nybb) +
-  geom_sf(data = points_sf, size = .1, aes(color = arrest_boro))
+  geom_sf(data = points_sf, size = .1, aes(color = arrest_boro)) +
   theme_minimal()
 ```
 
