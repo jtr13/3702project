@@ -1,3 +1,7 @@
+---
+execute:
+  error: true
+---
 # NYPD Arrest Data
 
 By: Jade Amaya
@@ -25,7 +29,7 @@ cannot say for certain all actually committed the crime.
 ### Missing value analysis
 
 ```{r}
-#| warining: false
+#| warning: false
 library(tidyverse)
 df <- read_csv("https://data.cityofnewyork.us/resource/uip8-fykc.csv", na = c("(null)", ""))
 str(df)
@@ -134,6 +138,12 @@ ggplot(df, aes(y = perp_race)) +
 ```
 
 ```{r}
+library(tidyverse)
+library(sf)
+library(readxl)
+
+nypp <- read_sf("nypp_25c/nypp.shp")
+
 newer <- left_join(nypp, df) |>
   select(c("Precinct", "perp_race", "Shape_Leng", "Shape_Area", "geometry")) |>
   group_by(perp_race, Precinct) |>
@@ -145,13 +155,8 @@ ggplot(newer) +
   theme_void() +
   facet_wrap(vars(perp_race))
 ```
+
 ```{r}
-library(tidyverse)
-library(sf)
-library(readxl)
-
-nypp <- read_sf("nypp_25c/nypp.shp")
-
 
 newdata <- left_join(nypp, df) |>
   select(c("Precinct", "perp_sex", "Shape_Leng", "Shape_Area", "geometry")) |>
