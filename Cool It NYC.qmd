@@ -1,0 +1,258 @@
+# Cool It Dataset
+
+## Introduction
+I chose the Cool It! NYC 2020 - Drinking Fountains dataset because I noticed the lack of working water fountains in the city, especially around parks. I enjoy running and a few weeks ago, I was running on a trail alongside the Hudson River. I didn't bring my water bottle because it was extra weight, and halfway through my run, the heat was getting to me so I needed water. However, all 5 water fountains I stopped at didn't work. This made me think how dangerous this could be, especially in the summer with high temperatures and extreme heat. The fact that 5 consecutive water fountains were broken made me curious whether this was a mere coincidence or part of a larger pattern that I could trace with the rest of the water fountains in NYC. 
+
+## Data
+### Description
+This dataset gives information about drinking fountains that were activated as a part of Cool It! NYC, which was a "citywide plan to increase the amount of cooling features avaiable to the public during heat emergencies." It's one of three datasets as part of this initiative -- the other two represent Spray Showers and Cooling Sites. The data was gathered by the NYC Department of Parks and Recreation (DPR), and the dataset is formatted into 25 columns, with each of the 3871 rows representing a unique drinking fountain. Some key columns or variable include DF Activated (activated; not yet activated; broken; under construction), FountainType, FountainCount (# of fountain fixtures), and Borough. It's important to note that this data is from 2020 and has not been updated since so any changes since 11/27/2020 will not be reflected. 
+
+### Missing Value Analysis
+```{r}
+df <- read.csv("data/Cool_It_Dataset.csv", na.strings = "")
+
+library(redav)
+plot_missing(df, num_char = 2)
+
+plot_missing(df)
+
+plot_missing(df, num_char = 4, max_cols = 20)
+# Decreased number of columns/variables but it looks like there are repeating patterns when they're actually distinct -- the other categories just don't show 
+
+
+# subproperty name is missing
+
+```
+The most common missing-value pattern is the one with the SubPropertyName missing (Pattern 1), with over 40% of the rows containing this pattern and over half of the fountains missing the SubPropertyName. This makes sense when taken in the context of another column PropertyName: because PropertyName is already provided and specifies the park/playground that the fountain is located in, there is no need to further specify the SubProperty Name unless the park is large enough to have distinct zones, such as Ferry Point Park. Thus, this missing pattern is not random or a result of failure in data collection, but is conditonal. It gives us a valuable piece of information that is otherwise not provided: the relative size of these park areas. The prevalence of certain missing patterns also reveals a prioritizing process in data collection. Missing patterns 1-7  are all some combination of the variables SubPropertyName, Painted, and Position, whereas variables like ParkDistrict, DF.Activated, and FountainType rarely have any missing values. When it comes to data collection, factors that define the identity and availability of the fountain are treated as required, whereas qualitative factors are treated as supplementary data and "nice-to-have." 
+
+## Results
+### Question 1
+Are there more broken water fountains in certain boroughs? 
+```{r}
+# heatmap of longitude/latitude
+library(tidyverse)
+library(sf)
+library(patchwork)
+
+boroughs <- read_sf("data/nyc boroughs/nybb.shp")
+# Transform SP Coordinates to GPS Coordinates
+boroughs <- st_transform(boroughs, crs = 4326)
+
+# Make the x, y values numeric
+df_numeric <- df |>
+  mutate(x_numeric = as.numeric(str_remove_all(x, ",")),
+         y_numeric = as.numeric(str_remove_all(y, ",")))
+
+# Define the current x, y as State Plane Coordinates for R
+df_sp <- st_as_sf(df_numeric, 
+                  coords = c("x_numeric", "y_numeric"),
+                  crs = 2263)
+
+# Transform SP Coordinates to GPS Coordinates
+df_gps <- st_transform(df_sp, crs = 4326)
+
+# Overwrite current x and y columns with the transformed GPS Coordinates
+cool <- df_gps |>
+  mutate(x = st_coordinates(geometry)[,1],
+         y = st_coordinates(geometry)[,2]) |>
+  st_drop_geometry()
+
+broken <- cool |>
+  filter(DF.Activated == "Broken")
+
+# SQUARES ARE A BIT TOO BIG
+p1 <- ggplot() +
+  geom_sf(data = boroughs, color = "gray") + 
+  geom_bin_2d(data = cool, aes(x = x, y = y)) +
+  coord_sf() +
+  scale_fill_distiller(palette = "Reds",
+                       direction = 1) +
+  theme_classic(15) +
+  labs(title = "Number of Water Fountains",
+       x = "Longitude",
+       y = "Latitude",
+       fill = "Number of Fountains")
+
+p2 <- ggplot() +
+  geom_sf(data = boroughs, color = "gray") + 
+  geom_bin_2d(data = broken, aes(x = x, y = y)) +
+  coord_sf() +
+  scale_fill_distiller(palette = "Reds",
+                       direction = 1) +
+  theme_classic(15) +
+  labs(title = "Number of Broken Water Fountains",
+       x = "Longitude",
+       y = "Latitude",
+       fill = "Number of Broken Fountains")
+
+p1 + p2
+```
+
+```{r}
+# graphs of all and broken fountains (map, no points)
+p3 <- ggplot() +
+  geom_sf(data = boroughs, color = "darkgray", fill = "gray", linewidth = 0.7) +
+  geom_density_2d_filled(data = cool, 
+                         aes(x = x, y = y, fill = after_stat(level)), alpha = 0.5) +
+  scale_fill_viridis_d(guide = "none") +
+  coord_sf(xlim = c(-74.25, -73.7), ylim = c(40.48, 40.92)) +
+  theme_classic(15) +
+  coord_sf() +
+  labs(title = "Geographic Concentration of Water Fountains",
+       x = "Longitude",
+       y = "Latitude",
+       fill = "Relative Density")
+
+p4 <- ggplot() +
+  geom_sf(data = boroughs, color = "darkgray", fill = "gray", linewidth = 0.7) +
+  geom_density_2d_filled(data = broken, 
+                         aes(x = x, y = y, fill = after_stat(level)), alpha = 0.5) +
+  scale_fill_viridis_d(guide = "none") +
+  coord_sf(xlim = c(-74.25, -73.7), ylim = c(40.48, 40.92)) +
+  theme_classic(15) +
+  labs(title = "Geographic Concentration of Broken Water Fountains",
+       x = "Longitude",
+       y = "Latitude",
+       fill = "Relative Density")
+
+p3 + p4
+```
+
+The longitude (x) and latitude (y) values in the dataset are NYC State Plane Coordinates, which are measured in feet. To convert back to standard decimal degrees/GPS coordinates, I did some extra research on how to use functions in the sf package. I graphed two different types of graphs: Square Heatmaps and Filled Density Estimate Contour Lines. The square heatmaps provide a clear visual map of the count of water fountains 
+A majority of fountains are concentrated in Manhattan
+However, 
+Brooklyn has a 
+In areas with a greater number of water fountains, one broken fountain might just be a minor inconvenience because there is likely another nearby. However, in areas where there are already fewer water fountains, a single broken fountain poses a larger problem of loss of access. As we see in the contour graph, this is the case with northern Brooklyn.  
+```{r}
+# broken density heatmap (points, no map) MIGHT DELETE
+ggplot(broken, aes(x = x, y = y)) +
+  geom_density_2d_filled(alpha = 0.8) +
+  geom_point(color = "black", alpha = 0.5, size = 0.7) +
+  theme_classic(15) +
+  coord_sf() +
+  labs(title = "Geographic Concentration of Broken Water Fountains",
+       x = "Longitude",
+       y = "Latitude",
+       fill = "Relative Density")
+
+# broken density heatmap (map, points) MIGHT DELETE
+ggplot() +
+  geom_sf(data = boroughs, color = "gray") +
+  geom_density_2d_filled(data = broken, 
+                         aes(x = x, y = y, fill = after_stat(level)), alpha = 0.5) +
+  geom_point(data = broken, aes(x = x, y = y), 
+             color = "black", alpha = 0.5, size = 0.7) +
+  scale_fill_viridis_d(guide = "none") +
+  coord_sf(xlim = c(-74.25, -73.7), ylim = c(40.48, 40.92)) +
+  theme_classic(15) +
+  labs(title = "Geographic Concentration of Broken Water Fountains",
+       x = "Longitude",
+       y = "Latitude",
+       fill = "Relative Density")
+```
+
+
+### Question 2
+Are there more drinking fountains placed in hotter neighborhoods?
+
+```{r}
+# Heat Vulnerability Index NYC 2020
+hvi <- read.csv("data/nyc heat 2020.csv")
+
+avg_hvi <- hvi |>
+  mutate(Borough = str_sub(NTACode, 1, 2)) |>
+  mutate(Borough = recode(Borough,
+                          "BX" = "Bronx",
+                          "BK" = "Brooklyn",
+                          "MN" = "Manhattan",
+                          "QN" = "Queens",
+                          "SI" = "Staten Island")) |>
+  group_by(Borough) |>
+  summarize(avg_hvi = mean(HVI_RANK, na.rm = TRUE))
+
+fountain_counts <- cool |>
+  # last two rows are lowercase m
+  mutate(Borough = toupper(Borough)) |> 
+  mutate(Borough = recode(Borough, 
+                          "X" = "Bronx",
+                          "B" = "Brooklyn",
+                          "M" = "Manhattan",
+                          "Q" = "Queens",
+                          "R" = "Staten Island")) |>
+  group_by(Borough) |>
+  summarize(total_fountains = n())
+
+combined <- inner_join(fountain_counts, avg_hvi, by = "Borough")
+
+p5 <- ggplot(combined, 
+       aes(x = reorder(Borough, total_fountains), y = total_fountains, fill = avg_hvi)) +
+  geom_col() +
+  geom_text(aes(label = round(avg_hvi, 1), vjust = -0.5)) +
+  scale_fill_gradient(low = "lightpink", high = "red", name = "Avg Heat Risk") +
+  theme_classic(15) +
+  labs(title = "Distribution of Water Fountains vs Heat Vulnerability Index",
+       x = "Borough",
+       y = "Total Drinking Fountains")
+
+
+nyc_pop <- data.frame(Borough = c("Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island"),
+  pop_2020 = c(1472654, 2736074, 1694251, 2405464, 495747))
+
+p6 <- ggplot(nyc_pop, aes(x = reorder(Borough, pop_2020), y = pop_2020)) +
+  geom_col(fill = "steelblue") +
+  geom_text(aes(label = scales::comma(pop_2020)), vjust = -0.5) +
+  scale_y_continuous(labels = scales::comma) +
+  theme_classic(15) +
+  labs(title = "NYC Population by Borough in 2020",
+       x = "Borough",
+       y = "Total Population")
+
+p5 + p6
+
+```
+
+
+### Question 3
+```{r}
+cool_borough <- cool |>
+  mutate(Borough = toupper(Borough)) |> 
+  mutate(Borough = recode(Borough, 
+                          "X" = "Bronx", 
+                          "B" = "Brooklyn", 
+                          "M" = "Manhattan", 
+                          "Q" = "Queens", 
+                          "R" = "Staten Island")) |>
+  
+# There are too many different fountain types, so create 4 broader buckets
+  mutate(Category = case_when(
+    str_detect(FountainType, "Bottle") ~ "Modern (Bottle Filler)",
+    str_detect(FountainType, "Dog|Trough") ~ "Pet/Animal Friendly",
+    str_detect(FountainType, "High Low|Accessible") ~ "ADA Accessible",
+    str_detect(FountainType, "Sink|Cooler|Indoor|Wall") ~ "Indoor/Service Sink",
+    str_detect(FountainType, "^[A-J]$|Pedestal|Monument|stone") ~ "Standard Outdoor Spout",
+    TRUE ~ "Other/Misc")) |>
+  group_by(Borough, Category) |>
+  summarize(count = n())
+
+# Plotting a Faceted Bar Chart (looks very different from your others!)
+ggplot(variety_analysis, aes(x = Category, y = count, fill = Category)) +
+  geom_col() +
+  facet_wrap(~Borough, scales = "free_y") + # Each borough gets its own small graph
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "The Diversity of Hydration Features",
+       subtitle = "Comparing specialized equipment across the five boroughs",
+       x = "Equipment Category",
+       y = "Number of Units")
+```
+
+
+## Conclusion
+
+## References
+https://library.virginia.edu/data/articles/spatial-r-using-sf-package
+https://ggplot2.tidyverse.org/reference/geom_density_2d.html 
+https://a816-dohbesp.nyc.gov/IndicatorPublic/data-features/hvi/ 
+https://www.nyc.gov/assets/planning/download/pdf/planning-level/nyc-population/census2020/dcp_2020-census-briefing-booklet-1.pdf 
+
+
