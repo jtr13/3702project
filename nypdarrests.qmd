@@ -29,7 +29,7 @@ cannot say for certain all actually committed the crime.
 ### Missing value analysis
 
 ```{r}
-#| warining: false
+#| warning: false
 library(tidyverse)
 df <- read_csv("https://data.cityofnewyork.us/resource/uip8-fykc.csv", na = c("(null)", ""))
 str(df)
