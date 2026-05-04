@@ -1,0 +1,59 @@
+# Penny's Chapter
+```{r}
+library(tidyverse)
+library(sf)
+food <- read.csv("data/Food/Food.csv")
+head(food)
+Neighborhood <- read.csv("data/Food/2020_Neighborhood_Tabulation_Areas_(NTAs)_20260422.csv")
+Neighborhood <- Neighborhood |> 
+  st_as_sf(wkt = "the_geom") |> 
+  rename(geometry = the_geom)
+data <- Neighborhood |> left_join(food,
+    by = c("NTA2020" = "Neighborhood.Tabulation.Area.NTA.")) |> 
+  mutate(food_insecurity = parse_number(Food.Insecure.Percentage), 
+         unemployment_rate = parse_number(Unemployment.Rate), 
+         Year = as.factor(Year)) 
+
+data |> filter (Year == "2025") |> ggplot() + 
+  geom_sf(aes(fill = food_insecurity)) + 
+  scale_fill_distiller(palette = "Greens", direction = 1, limits = c(0, 40), breaks = seq(0, 40, by = 10)) + 
+  labs(title = "Food Insecurity by Neighborhood, 2025")
+  
+data |> filter (Year == "2024") |> ggplot() + 
+  geom_sf(aes(fill = food_insecurity)) + 
+  scale_fill_distiller(palette = "Reds", direction = 1, limits = c(0, 40), breaks = seq(0, 40, by = 10)) + 
+  labs(title = "Food Insecurity by Neighborhood, 2024")
+
+data |> filter (Year == "2023") |> ggplot() + 
+  geom_sf(aes(fill = food_insecurity)) + 
+  scale_fill_distiller(palette = "Blues", direction = 1, limits = c(0, 40), breaks = seq(0, 40, by = 10)) + 
+  labs(title = "Food Insecurity by Neighborhood, 2023")
+
+data |> ggplot(aes(x = unemployment_rate, y = food_insecurity)) + geom_point(aes(color = Year))
+data |> filter (Year == "2024" | Year == "2023") |> ggplot(aes(x = unemployment_rate, y = food_insecurity)) + geom_point(aes(color = Year))
+data |> filter (Year == "2025") |> 
+  ggplot(aes(x = unemployment_rate, y = food_insecurity)) + geom_point() + labs(title = "Food Insecurity by Neighborhood, 2025")
+
+data |> filter (Year == "2025") |> group_by (BoroName) |> 
+  summarize (unemployment_rate_mean = mean(unemployment_rate), 
+             food_insecurity_mean = mean(food_insecurity)) |> 
+  pivot_longer(
+    cols = c(unemployment_rate_mean, food_insecurity_mean),
+    names_to = "indicator",
+    values_to = "percentage") |> 
+  ggplot(aes(x = BoroName, y = percentage, fill = indicator)) + 
+  geom_col(position = "dodge")
+
+housing <- read.csv("data/Food/Housing_Database_by_2020_NTA_20260504.csv")
+housing <- housing |> select(c(2:23)) 
+data_foodhousing <- data |> left_join(housing,
+    by = c("NTA2020" = "nta2020")) |> mutate(cenunits20 = parse_number(cenunits20))
+
+data_foodhousing |> filter (Year == "2025") |> ggplot(aes(x = cenunits20, y = food_insecurity)) + geom_point()
+
+
+library(redav)
+plot_missing(data)
+
+
+```
