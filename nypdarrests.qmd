@@ -25,9 +25,9 @@ cannot say for certain all actually committed the crime.
 ### Missing value analysis
 
 ```{r}
-#| warining: false
+#| warning: false
 library(tidyverse)
-df <- read_csv("https://data.cityofnewyork.us/resource/uip8-fykc.csv?$limit=69000", na = c("(null)", ""))
+df <- read_csv("https://data.cityofnewyork.us/resource/uip8-fykc.csv", na = c("(null)", ""))
 str(df)
 
 df <- df |>
@@ -39,7 +39,7 @@ df <- df |>
 #| warning: false
 library(redav)
 df_new <- df |>
-  select(starts_with(c("perp_sex", "age", "pd_d", "k", "o", "law_", "pd_c")))
+  select(starts_with(c("perp_sex", "age", "pd_d", "k", "o", "law_")))
 colnames(df_new) <- str_remove_all(colnames(df_new), "PE")
 plot_missing(df_new)
 ```
@@ -65,11 +65,13 @@ of defense.
 ### Where are arrests concentrated?
 ```{r}
 library(ggplot2)
+ggplot(df, aes(x = longitude, y = latitude)) +
+  geom_point(size = 0.5, aes(color = arrest_boro)) +
+  theme_bw()
 ```
 
 
 ```{r}
-#|warning: false
 library(sf)
 nybb <- st_read("nybb_26a/nybb.shp")
 
@@ -77,21 +79,25 @@ nybb <- nybb |>
   mutate(BoroCode = recode(BoroCode, `1` = "M", `2` = "B", `3` = "K",
                            '4' = "Q", '5' = "S")) |>
   rename(arrest_boro = BoroCode)
-
-df <- read_csv("https://data.cityofnewyork.us/resource/uip8-fykc.csv?$limit=69000", na = c("(null)", ""))
 ```
 
-
 ```{r}
-#| message: false
-points_sf <- df |> 
- select(longitude, latitude, arrest_boro) |> 
-  na.omit() |> 
-  st_as_sf(coords = c("longitude", "latitude"), crs = 4326) 
-ggplot() + 
- geom_sf(data = nybb) +
-  geom_sf(data = points_sf, size = .1, aes(color = arrest_boro))
-  theme_minimal()
+boro <- left_join(nybb, df) 
+
+boro_points <- st_as_sf(boro, 
+                        coords = c("longitude", "latitide", crs = 4326))
+```
+I need help below because I'm trying to plot coordinates on the shape, but
+it's not working, even after I asked Mackenna for help
+```{r}
+#points_sf <- boro |> 
+ #select(longitude, latitude, arrest_boro) |> 
+  #na.omit() |> 
+  #st_as_sf(coords = c("longitude", "latitude"), crs = 4326) 
+#ggplot() + 
+ #geom_sf(data = boro) +
+  #geom_sf(data = points_sf, size = .1)
+  #theme_minimal()
 ```
 
 ### What are the top crimes people are arrested for?
@@ -133,9 +139,6 @@ library(sf)
 library(readxl)
 
 nypp <- read_sf("nypp_25c/nypp.shp")
-
-df <- df |>
-  rename(Precinct = arrest_precinct) 
 
 newer <- left_join(nypp, df) |>
   select(c("Precinct", "perp_race", "Shape_Leng", "Shape_Area", "geometry")) |>
@@ -221,24 +224,5 @@ g2 <- ggplot(black) +
 library(patchwork)
 g1 + g2
 ```
-
-```{r}
-race_counts <- newer |>
-  group_by(Precinct, perp_race) |>
-  mutate(count = n()) |>
-  ungroup()
-
-prop_data <- race_counts |>
-  group_by(Precinct) |>
-  mutate(prop = count / sum(count))
-
-ggplot(prop_data) +
-  geom_sf(aes(fill = prop)) +
-  geom_sf_text(aes(label = Precinct), size = 2, color = "white") +
-  facet_wrap(~perp_race) +
-  theme_minimal()
-```
-
-
 
 ## Conclusion
