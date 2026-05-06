@@ -350,11 +350,11 @@
     ]
   },
   {
-    "objectID": "instructions.html#submission-steps",
-    "href": "instructions.html#submission-steps",
+    "objectID": "instructions.html#submitting-your-first-pull-request",
+    "href": "instructions.html#submitting-your-first-pull-request",
     "title": "11  Contributor instructions",
-    "section": "11.2 Submission steps",
-    "text": "11.2 Submission steps\nWorkflow: contributing to a repository that you do not have write access to.\n\nFork this repo.\nClone your fork.\nAdd an upstream remote.\nCreate a new branch.\nCopy your .qmd file into the new branch from testproject or create a new .qmd file and copy and paste the content.\n[OPTIONAL] Add your data to the data/ folder, if relevant.\nWhen ready*, commit and push your work to GitHub and create a pull request..\nAt this point a back and forth will begin with the team managing the pull requests. If you are asked to make changes, simply make the changes on your local branch, save, commit, and push to GitHub. The new commits will be added to your pull request; you do not need to, and should not, create a new pull request. (If, based on the circumstances, it does make sense to close the pull request and start a new one, we will tell you.)",
+    "section": "11.2 Submitting your first pull request",
+    "text": "11.2 Submitting your first pull request\nWorkflow: contributing to a repository that you do not have write access to.\n\nFork this repo.\nClone your fork.\nAdd an upstream remote.\nCreate a new branch.\nCopy your .qmd file into the new branch from testproject or create a new .qmd file and copy and paste the content.\n[OPTIONAL] Add your data to the data/ folder, if relevant.\nWhen ready*, commit and push your work to GitHub and create a pull request..\nAt this point a back and forth will begin with the team managing the pull requests. If you are asked to make changes, simply make the changes on your local branch, save, commit, and push to GitHub. The new commits will be added to your pull request; you do not need to, and should not, create a new pull request. (If, based on the circumstances, it does make sense to close the pull request and start a new one, we will tell you.)",
     "crumbs": [
       "<span class='chapter-number'>11</span>  <span class='chapter-title'>Contributor instructions</span>"
     ]
@@ -365,6 +365,16 @@
     "title": "11  Contributor instructions",
     "section": "11.3 Preparing your .qmd file",
     "text": "11.3 Preparing your .qmd file\nYou should only submit ONE .qmd file.\n\nCreate a concise, descriptive name for your file, such as gardens.qmd or housing.qmd. The words only and joined with underscores, no white space. Use .qmd not .Qmd. In addition, all letters must be lowercase.\nCompletely delete the YAML header (the section at the top of the .qmd that includes name, title, date, output, etc.) including the --- line.\nChoose a short, descriptive, human readable title for your project as your title will show up in the table of contents – look at examples in the panel on the left. Use title case for your chapter title. On the first line of your document, enter a single hashtag, followed by a single whitespace, and then your title. Do not use single # headers anywhere else in the document.\nThe second line should be blank, followed by your name(s):\n# NYC playgrounds\n\nYour name\n\nYour content starts here. \nYour file should not contain any of the following: file paths that are unique to your computer /users/yourname/..., getwd(), setwd(), write() statements (unless commented out), install.packages()",
+    "crumbs": [
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Contributor instructions</span>"
+    ]
+  },
+  {
+    "objectID": "instructions.html#submitting-subsequent-pull-requests",
+    "href": "instructions.html#submitting-subsequent-pull-requests",
+    "title": "11  Contributor instructions",
+    "section": "11.4 Submitting subsequent pull requests",
+    "text": "11.4 Submitting subsequent pull requests\n\nONCE: Please follow the instructions in this issue to sync with the newly reduced size repo.\nIN GENERAL: after a previous pull request is merged, sync your fork (I recommend following the instructions for doing so in the terminal, not using the “Sync fork” button), delete your old branch (remote and local), stop tracking the old branch, create a new branch and follow the usual procedure described above for doing work and submitting a new pull request.",
     "crumbs": [
       "<span class='chapter-number'>11</span>  <span class='chapter-title'>Contributor instructions</span>"
     ]
