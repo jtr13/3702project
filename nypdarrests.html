@@ -216,7 +216,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./2015trees.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">2015 Tree Census</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">2015 Street Tree Census</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -306,7 +306,7 @@ window.Quarto = {
 <p>By: Jade Amaya</p>
 <section id="introduction" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">4.1</span> Introduction</h2>
-<p>Hi everyone, welcome to my project! This project looks at NYPD Arrest Data (YTD) and examines the relationships between arrests, location, demographic characteristics, and other crime indicators. I use precinct-level aggregated data to analyze how arrest patterns vary across NYC and how they relate to complaints, shootings, and race with respect to arrests. I wanted to look at this data set (and related ones) because I have a broader interest in how policing and crime intersect with historical patterns in law enforcement, specifically in the U.S. Some historical context motivating my project is related to slavery patrol systems during the antebellum period that were replaced by modern police systems during the Jim Crow era to reinforce segregation, and recently (as in a few years ago) stop-and-frisk in the late 20th to early 21st century. Amid this context, I use the following datasets (refer to Data Description) to look at statistical relationships that may tell a story as to how arrests are distributed across NYC during this time.</p>
+<p>Hi everyone, welcome to my project! This project looks at NYPD Arrest Data (YTD) and examines the relationships between arrests, location, demographic characteristics, and other crime indicators. I use precinct-level aggregated data to analyze how arrest patterns vary across NYC and how they relate to complaints, shootings, and race with respect to arrests. I wanted to look at this data set (and related ones) because I have a broader interest in how policing and crime intersect with historical patterns in law enforcement, specifically in the U.S. Some historical context motivating my project is related to slavery patrol systems during the antebellum period that were replaced by modern police systems during the Jim Crow era to reinforce segregation, and recently (as in a few years ago) stop-and-frisk in the late 20th to early 21st century. Amid this context, I use the following datasets to look at statistical relationships that may tell a story as to how arrests are distributed across NYC during this time.</p>
 </section>
 <section id="data" class="level2" data-number="4.2">
 <h2 data-number="4.2" class="anchored" data-anchor-id="data"><span class="header-section-number">4.2</span> Data</h2>
@@ -316,6 +316,7 @@ window.Quarto = {
 <p>Here are the links to the datasets:</p>
 <p><a href="https://data.cityofnewyork.us/Public-Safety/NYPD-Arrest-Data-Year-to-Date-/uip8-fykc/about_data">NYPD Arrests</a></p>
 <p><a href="https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243/about_data">NYPD Complaints</a></p>
+<p><a href="https://data.cityofnewyork.us/Public-Safety/Shootings-2006-Present-/5ucz-vwe8/about_data">NYC Shootings</a></p>
 </section>
 <section id="missing-value-analysis" class="level3" data-number="4.2.2">
 <h3 data-number="4.2.2" class="anchored" data-anchor-id="missing-value-analysis"><span class="header-section-number">4.2.2</span> Missing Value Analysis</h3>
@@ -334,7 +335,7 @@ window.Quarto = {
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">law_code =</span> LAW_CODE, <span class="at">x_coord_cd =</span> X_COORD_CD, <span class="at">y_coord_cd =</span> Y_COORD_CD,</span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">ky_cd =</span> KY_CD, <span class="at">jurisdiction_code =</span> JURISDICTION_CODE, </span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">ofns_desc =</span> OFNS_DESC, <span class="at">arrest_boro =</span> ARREST_BORO, </span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">arrest_precinct =</span> ARREST_PRECINCT, <span class="at">perp_race =</span> PERP_RACE,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">Precinct =</span> ARREST_PRECINCT, <span class="at">perp_race =</span> PERP_RACE,</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">pd_cd =</span> PD_CD, <span class="at">longitude =</span> Longitude, <span class="at">latitude =</span> Latitude)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell" data-layout-align="center">
@@ -382,7 +383,10 @@ Projected CRS: NAD83 / New York Long Island (ftUS)</code></pre>
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>graph1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(arrests, <span class="fu">aes</span>(<span class="at">x =</span> arrest_boro, <span class="at">fill =</span> arrest_boro)) <span class="sc">+</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Arrest Counts in New York City by Borough"</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"From January 1, 2026 to March 31, 2026"</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"count"</span>, <span class="at">x =</span> <span class="st">"NYC Borough"</span>) <span class="sc">+</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>points_sf <span class="ot">&lt;-</span> arrests <span class="sc">|&gt;</span> </span>
@@ -391,10 +395,16 @@ Projected CRS: NAD83 / New York Long Island (ftUS)</code></pre>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>(<span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"longitude"</span>, <span class="st">"latitude"</span>), <span class="at">crs =</span> <span class="dv">4326</span>) </span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>graph2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a> <span class="fu">geom_sf</span>(<span class="at">data =</span> nybb) <span class="sc">+</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> points_sf, <span class="at">size =</span> .<span class="dv">1</span>, <span class="fu">aes</span>(<span class="at">color =</span> arrest_boro)) <span class="sc">+</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> points_sf, <span class="at">size =</span> .<span class="dv">1</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="fu">aes</span>(<span class="at">color =</span> arrest_boro)) <span class="sc">+</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>() <span class="sc">+</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Spatial Distribution of Arrests in New York City"</span>,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"From January 1, 2026 to March 31, 2026"</span>,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"longitude"</span>, <span class="at">y =</span> <span class="st">"latitude"</span>) <span class="sc">+</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<section id="concentration-by-borough" class="level5" data-number="4.3.1.1.1">
+<h5 data-number="4.3.1.1.1" class="anchored" data-anchor-id="concentration-by-borough"><span class="header-section-number">4.3.1.1.1</span> Concentration by Borough</h5>
 <div class="cell" data-layout-align="center" data-fig-length="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>graph2 <span class="sc">+</span> graph1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
@@ -405,40 +415,30 @@ Projected CRS: NAD83 / New York Long Island (ftUS)</code></pre>
 </div>
 </div>
 </div>
+<p>The graphs compare arrest patterns across NYC’s boroughs, with each borough labeled by its abbreviation/first initial letter (except for Brooklyn, represented by “K”). The left spatial graph shows the spatial distribution of individual arrest locations using their respective x and y coordinates, while the right bar graph shows the total number of arrests in each borough. Side by side, the plots show that Brooklyn (n = 21111) has the highest numbers of arrests compared to the other boroughs, while Staten Island (n = 2551) has the lowest.</p>
+</section>
+<section id="concentration-by-precinct" class="level5" data-number="4.3.1.1.2">
+<h5 data-number="4.3.1.1.2" class="anchored" data-anchor-id="concentration-by-precinct"><span class="header-section-number">4.3.1.1.2</span> Concentration by Precinct</h5>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>nypp <span class="ot">&lt;-</span> <span class="fu">read_sf</span>(<span class="st">"nypp_25c/nypp.shp"</span>)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>arrests <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/arrests.csv"</span>, <span class="at">na =</span> <span class="fu">c</span>(<span class="st">"(null)"</span>, <span class="st">""</span>))</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>arrests <span class="ot">&lt;-</span> arrests <span class="sc">|&gt;</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">arrest_date =</span> <span class="fu">mdy</span>(ARREST_DATE)) <span class="sc">|&gt;</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">perp_sex =</span> PERP_SEX, <span class="at">age =</span> AGE_GROUP, <span class="at">pd_desc =</span> PD_DESC,</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">arrest_key =</span> ARREST_KEY, <span class="at">law_cat_cd =</span> LAW_CAT_CD,</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">law_code =</span> LAW_CODE, <span class="at">x_coord_cd =</span> X_COORD_CD, <span class="at">y_coord_cd =</span> Y_COORD_CD,</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">ky_cd =</span> KY_CD, <span class="at">jurisdiction_code =</span> JURISDICTION_CODE, </span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">ofns_desc =</span> OFNS_DESC, <span class="at">arrest_boro =</span> ARREST_BORO, </span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">Precinct =</span> ARREST_PRECINCT, <span class="at">perp_race =</span> PERP_RACE,</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">pd_cd =</span> PD_CD, <span class="at">longitude =</span> Longitude, <span class="at">latitude =</span> Latitude)</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>newer <span class="ot">&lt;-</span> <span class="fu">left_join</span>(nypp, arrests) <span class="sc">|&gt;</span></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(<span class="st">"Precinct"</span>, <span class="st">"perp_race"</span>, <span class="st">"Shape_Leng"</span>, <span class="st">"Shape_Area"</span>, <span class="st">"geometry"</span>, <span class="st">"arrest_date"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(perp_race, Precinct) <span class="sc">|&gt;</span></span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">race_count =</span> <span class="fu">n</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>precincts_counts <span class="ot">&lt;-</span> arrests <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(Precinct) <span class="sc">|&gt;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">count =</span> n)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(precincts_counts, <span class="fu">aes</span>(<span class="at">x =</span> count, <span class="at">y =</span> <span class="fu">fct_reorder</span>(<span class="fu">as.factor</span>(Precinct), count))) <span class="sc">+</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>, <span class="at">color =</span> <span class="st">"cornflowerblue"</span>) <span class="sc">+</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"Precinct"</span>, <span class="at">title =</span> <span class="st">"Number of Arrests by Precinct"</span>, <span class="at">subtitle =</span> <span class="st">"From January 1, 2026 to March 31, 2026"</span>) <span class="sc">+</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="dv">18</span>) <span class="sc">+</span> </span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>), <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="nypdarrests_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
 </div>
-<div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>newdata <span class="ot">&lt;-</span> <span class="fu">left_join</span>(nypp, arrests) <span class="sc">|&gt;</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(<span class="st">"Precinct"</span>, <span class="st">"perp_sex"</span>, <span class="st">"Shape_Leng"</span>, <span class="st">"Shape_Area"</span>, <span class="st">"geometry"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(perp_sex <span class="sc">==</span> <span class="st">"M"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Precinct) <span class="sc">|&gt;</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Male =</span> <span class="fu">n</span>())</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>male <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(newdata) <span class="sc">+</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> Male)) <span class="sc">+</span> </span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> Precinct), <span class="at">size =</span> <span class="dv">2</span>,</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>               <span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>   <span class="fu">scale_fill_gradient</span>(<span class="at">low =</span> <span class="st">"darkblue"</span>, <span class="at">high =</span> <span class="st">"lightblue"</span>,</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>                     <span class="at">na.value =</span> <span class="st">"grey70"</span>) <span class="sc">+</span></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>() </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+</div>
+<p>This Cleveland dot plot displays the distribution of the total amount of arrests from 1/1/26 to 3/31/26 across NYC precincts, with Precinct 75 having the highest number of arrests (n = 2545) and Precinct 22 having the lowest amount of arrests (n = 19).</p>
+</section>
 </section>
 </section>
 <section id="topic-2-arrests-and-indicators-of-crime-across-precincts" class="level3" data-number="4.3.2">
@@ -446,45 +446,47 @@ Projected CRS: NAD83 / New York Long Island (ftUS)</code></pre>
 <section id="what-is-the-association-between-the-number-of-crime-complaints-and-arrests-across-precincts" class="level4" data-number="4.3.2.1">
 <h4 data-number="4.3.2.1" class="anchored" data-anchor-id="what-is-the-association-between-the-number-of-crime-complaints-and-arrests-across-precincts"><span class="header-section-number">4.3.2.1</span> What is the association between the number of crime complaints and arrests across precincts?</h4>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>complaints <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://data.cityofnewyork.us/resource/5uac-w243.csv?$limit=133114"</span>, <span class="at">na =</span> <span class="fu">c</span>(<span class="st">"(null)"</span>, <span class="st">""</span>),</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">col_types =</span> <span class="fu">cols</span>(</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">cmplnt_num =</span> <span class="fu">col_character</span>()))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>complaints <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://data.cityofnewyork.us/resource/5uac-w243.csv?$limit=133114"</span>, <span class="at">na =</span> <span class="fu">c</span>(<span class="st">"(null)"</span>, <span class="st">""</span>),</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">col_types =</span> <span class="fu">cols</span>(</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">cmplnt_num =</span> <span class="fu">col_character</span>()))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>complaints <span class="ot">&lt;-</span> complaints <span class="sc">|&gt;</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">complaint_date =</span> <span class="fu">as.Date</span>(cmplnt_fr_dt)) <span class="sc">|&gt;</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">Precinct =</span> addr_pct_cd) <span class="sc">|&gt;</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(complaint_date <span class="sc">&gt;=</span> <span class="fu">as.Date</span>(<span class="st">"2026-01-01"</span>))</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>complaintsbyprecinct <span class="ot">&lt;-</span> complaints <span class="sc">|&gt;</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(Precinct) <span class="sc">|&gt;</span></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">complaints =</span> n)</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>arrestsbyprecinct <span class="ot">&lt;-</span> arrests <span class="sc">|&gt;</span></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(Precinct) <span class="sc">|&gt;</span></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">arrests =</span> n)</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>joint_data <span class="ot">&lt;-</span> <span class="fu">left_join</span>(complaintsbyprecinct, arrestsbyprecinct, <span class="at">by =</span> <span class="st">"Precinct"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>complaints <span class="ot">&lt;-</span> complaints <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">complaint_date =</span> <span class="fu">as.Date</span>(cmplnt_fr_dt)) <span class="sc">|&gt;</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">Precinct =</span> addr_pct_cd) <span class="sc">|&gt;</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(complaint_date <span class="sc">&gt;=</span> <span class="fu">as.Date</span>(<span class="st">"2026-01-01"</span>))</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>complaintsbyprecinct <span class="ot">&lt;-</span> complaints <span class="sc">|&gt;</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(Precinct) <span class="sc">|&gt;</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">complaints =</span> n)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>arrestsbyprecinct <span class="ot">&lt;-</span> arrests <span class="sc">|&gt;</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(Precinct) <span class="sc">|&gt;</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">arrests =</span> n)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>joint_data <span class="ot">&lt;-</span> <span class="fu">left_join</span>(complaintsbyprecinct, arrestsbyprecinct, <span class="at">by =</span> <span class="st">"Precinct"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(joint_data, <span class="fu">aes</span>(<span class="at">x =</span> complaints, <span class="at">y =</span> arrests)) <span class="sc">+</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>, <span class="at">stroke =</span> <span class="dv">0</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Complaints vs Arrests by Precinct"</span>) <span class="sc">+</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(joint_data, <span class="fu">aes</span>(<span class="at">x =</span> complaints, <span class="at">y =</span> arrests)) <span class="sc">+</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>, <span class="at">stroke =</span> <span class="dv">0</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"NYPD Arrests vs. NYPD Complaints by Precinct"</span>, </span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"From January 1, 2026 to March 31, 2026"</span>) <span class="sc">+</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>), <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="nypdarrests_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+<p><img src="nypdarrests_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>There is a strong, positive correlation between NYPD complaints and arrests. After running a linear regression model, I found that complaints were a strong predictor for arrests(<span class="math inline">\(\beta = 0.62, p &lt; 0.001\)</span>), and that NYPD complaints also explain 91.11% of the variation in arrests (<span class="math inline">\(R^2 = 0.9111\)</span>). In other words, there is a strong association between NYPD complaints and arrests.</p>
+<p>The graph presents the relationship between the number of NYPD complaints and arrests across precincts, where each plotted point represents a precinct. There is a strong, positive association between complaints and arrests, suggesting that precincts with more complaints are a strong predictor of arrests (<span class="math inline">\(\beta = 0.62, p &lt; 0.001\)</span>). Finally, NYPD complaints explain 91.11% of the variation in arrests (<span class="math inline">\(R^2 = 0.9111\)</span>).</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(arrests<span class="sc">~</span>complaints, <span class="at">data =</span> joint_data)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(arrests<span class="sc">~</span>complaints, <span class="at">data =</span> joint_data)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -507,40 +509,63 @@ F-statistic: 779.2 on 1 and 76 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>shootings <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://data.cityofnewyork.us/resource/5ucz-vwe8.csv?$limit=25000"</span>, <span class="at">na =</span> <span class="fu">c</span>(<span class="st">"(null)"</span>, <span class="st">""</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>shootings <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://data.cityofnewyork.us/resource/5ucz-vwe8.csv?$limit=25000"</span>, <span class="at">na =</span> <span class="fu">c</span>(<span class="st">"(null)"</span>, <span class="st">""</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>shootings <span class="ot">&lt;-</span> shootings <span class="sc">|&gt;</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">boro =</span> <span class="fu">recode</span>(boro, <span class="st">`</span><span class="at">MANHATTAN</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"M"</span>, <span class="st">`</span><span class="at">BRONX</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"B"</span>, <span class="st">`</span><span class="at">BROOKLYN</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"K"</span>,</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>                           <span class="st">'QUEENS'</span> <span class="ot">=</span> <span class="st">"Q"</span>, <span class="st">'STATEN ISLAND'</span> <span class="ot">=</span> <span class="st">"S"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">boro =</span> boro, <span class="at">Precinct =</span> precinct) <span class="sc">|&gt;</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(occur_date <span class="sc">&gt;=</span> <span class="fu">as.Date</span>(<span class="st">"2026-01-01"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>shootings <span class="ot">&lt;-</span> shootings <span class="sc">|&gt;</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">boro =</span> <span class="fu">recode</span>(boro, <span class="st">`</span><span class="at">MANHATTAN</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"M"</span>, <span class="st">`</span><span class="at">BRONX</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"B"</span>, <span class="st">`</span><span class="at">BROOKLYN</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"K"</span>,</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                           <span class="st">'QUEENS'</span> <span class="ot">=</span> <span class="st">"Q"</span>, <span class="st">'STATEN ISLAND'</span> <span class="ot">=</span> <span class="st">"S"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">boro =</span> boro, <span class="at">Precinct =</span> precinct) <span class="sc">|&gt;</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(occur_date <span class="sc">&gt;=</span> <span class="fu">as.Date</span>(<span class="st">"2026-01-01"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>arrests_num <span class="ot">&lt;-</span> arrests <span class="sc">|&gt;</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(Precinct) <span class="sc">|&gt;</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">arrests =</span> n)</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>complaints_num <span class="ot">&lt;-</span> complaints <span class="sc">|&gt;</span></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(Precinct) <span class="sc">|&gt;</span></span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">complaints =</span> n) </span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>shootings_num <span class="ot">&lt;-</span> shootings <span class="sc">|&gt;</span></span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(Precinct) <span class="sc">|&gt;</span></span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">shootings =</span> n)</span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> arrests_num <span class="sc">|&gt;</span></span>
-<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">full_join</span>(complaints_num, <span class="at">by =</span> <span class="st">"Precinct"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">full_join</span>(shootings_num, <span class="at">by =</span> <span class="st">"Precinct"</span>)</span>
-<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>shootings <span class="ot">&lt;-</span>  <span class="fu">replace_na</span>(data<span class="sc">$</span>shootings, <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>arrests_num <span class="ot">&lt;-</span> arrests <span class="sc">|&gt;</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(Precinct) <span class="sc">|&gt;</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">arrests =</span> n)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>complaints_num <span class="ot">&lt;-</span> complaints <span class="sc">|&gt;</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(Precinct) <span class="sc">|&gt;</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">complaints =</span> n) </span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>shootings_num <span class="ot">&lt;-</span> shootings <span class="sc">|&gt;</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(Precinct) <span class="sc">|&gt;</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">shootings =</span> n)</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> arrests_num <span class="sc">|&gt;</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">full_join</span>(complaints_num, <span class="at">by =</span> <span class="st">"Precinct"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">full_join</span>(shootings_num, <span class="at">by =</span> <span class="st">"Precinct"</span>)</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>shootings <span class="ot">&lt;-</span>  <span class="fu">replace_na</span>(data<span class="sc">$</span>shootings, <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="what-type-of-crime-indicators-are-more-strongly-associated-with-nypd-arrests-across-nyc-precincts." class="level4" data-number="4.3.2.2">
 <h4 data-number="4.3.2.2" class="anchored" data-anchor-id="what-type-of-crime-indicators-are-more-strongly-associated-with-nypd-arrests-across-nyc-precincts."><span class="header-section-number">4.3.2.2</span> What type of crime indicators are more strongly associated with NYPD arrests across NYC precincts.</h4>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally)</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpairs</span>(data[, <span class="fu">c</span>(<span class="st">"arrests"</span>, <span class="st">"complaints"</span>, <span class="st">"shootings"</span>)])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpairs</span>(data[, <span class="fu">c</span>(<span class="st">"arrests"</span>, <span class="st">"complaints"</span>, <span class="st">"shootings"</span>)])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="nypdarrests_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>In this scatterplot matrix, each observation represents a NYC precinct. The variables, which are NYPD arrests, NYPD complaints, and NYC shootings, are summed up counts within each precinct. The pairwise plot shows relationships and their correlation coefficients between each combination of the variables, all of which are positive and statistically significant (indicated by the asterisks). The graph also suggests that precincts with higher levels of NYPD complaints are correlated with higher NYPD arrest counts, while shootings have a weaker correlation with higher arrest accounts in comparison.</p>
+</section>
+</section>
+<section id="topic-3-arrests-by-location-and-race" class="level3" data-number="4.3.3">
+<h3 data-number="4.3.3" class="anchored" data-anchor-id="topic-3-arrests-by-location-and-race"><span class="header-section-number">4.3.3</span> Topic 3: Arrests by Location and Race</h3>
+<section id="does-the-racial-distribution-of-arrests-differ-by-nyc-borough" class="level4" data-number="4.3.3.1">
+<h4 data-number="4.3.3.1" class="anchored" data-anchor-id="does-the-racial-distribution-of-arrests-differ-by-nyc-borough"><span class="header-section-number">4.3.3.1</span> Does the racial distribution of arrests differ by NYC borough?</h4>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(arrests, <span class="fu">aes</span>(<span class="at">x =</span> arrest_boro, <span class="at">fill =</span> perp_race)) <span class="sc">+</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">position =</span> <span class="st">"fill"</span>) <span class="sc">+</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"Set1"</span>) <span class="sc">+</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"proportion"</span>, <span class="at">title =</span> <span class="st">"Proportional Distribution of Arrests by Race and NYC Borough"</span>,</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Race"</span>, <span class="at">x =</span> <span class="st">"Borough"</span>, <span class="at">subtitle =</span> <span class="st">"From January 1, 2026 to March 31, 2026"</span>) <span class="sc">+</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>), <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -549,97 +574,86 @@ F-statistic: 779.2 on 1 and 76 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 </div>
-<p>In this graph, each observation represents a NYC precinct. The variables, which are arrests, complaints, and shootings, are summed up counts within each precinct. The pairwise plot shows relationships and their correlation coefficients between each combination of the variables, all of which are positive and statistically significant (indicated by the asterisks). The graph also suggests that precincts with higher levels of NYPD complaints are associated with higher NYPD arrest counts, while shootings have a weaker association with higher arrest accounts in comparison.</p>
-</section>
-</section>
-<section id="topic-3-arrests-by-location-and-race" class="level3" data-number="4.3.3">
-<h3 data-number="4.3.3" class="anchored" data-anchor-id="topic-3-arrests-by-location-and-race"><span class="header-section-number">4.3.3</span> Topic 3: Arrests by Location and Race</h3>
-<section id="does-the-racial-distribution-of-arrests-differ-by-nyc-borough" class="level4" data-number="4.3.3.1">
-<h4 data-number="4.3.3.1" class="anchored" data-anchor-id="does-the-racial-distribution-of-arrests-differ-by-nyc-borough"><span class="header-section-number">4.3.3.1</span> Does the racial distribution of arrests differ by NYC borough?</h4>
-<div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(arrests, <span class="fu">aes</span>(<span class="at">x =</span> arrest_boro, <span class="at">fill =</span> perp_race)) <span class="sc">+</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">position =</span> <span class="st">"fill"</span>) <span class="sc">+</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"Set1"</span>) <span class="sc">+</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"proportion"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="nypdarrests_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
+<p>The bar graph shows the proportional distribution of arrests by race across the five boroughs, with each borough on the x-axis labeled by its first letter initial, with “K” representing Brooklyn. Across all boroughs, individuals identified as Black make up the largest proportion of arrests compared to other racial groups, while Asians/Pacific Islanders represent the smallest proportion</p>
 </section>
 <section id="what-is-the-racial-distribution-of-people-who-are-arrested-in-the-precinct-with-the-highest-number-of-arrests" class="level4" data-number="4.3.3.2">
 <h4 data-number="4.3.3.2" class="anchored" data-anchor-id="what-is-the-racial-distribution-of-people-who-are-arrested-in-the-precinct-with-the-highest-number-of-arrests"><span class="header-section-number">4.3.3.2</span> What is the racial distribution of people who are arrested in the precinct with the highest number of arrests?</h4>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>Precinct[<span class="fu">which.max</span>(data<span class="sc">$</span>arrests)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>Precinct[<span class="fu">which.max</span>(data<span class="sc">$</span>arrests)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 75</code></pre>
 </div>
 </div>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>p75 <span class="ot">&lt;-</span> arrests <span class="sc">|&gt;</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Precinct <span class="sc">==</span> <span class="dv">75</span>)</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>race_p75 <span class="ot">&lt;-</span> p75 <span class="sc">|&gt;</span></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(perp_race)</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>race_p75 <span class="ot">&lt;-</span> p75 <span class="sc">|&gt;</span></span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(perp_race) <span class="sc">|&gt;</span></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prop =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n))</span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(race_p75, <span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">fct_reorder</span>(perp_race, prop), <span class="at">x =</span> prop)) <span class="sc">+</span></span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"darkblue"</span>) <span class="sc">+</span></span>
-<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Racial distribution of arrests in Precinct 75 (Brooklyn)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>p75 <span class="ot">&lt;-</span> arrests <span class="sc">|&gt;</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Precinct <span class="sc">==</span> <span class="dv">75</span>)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>race_p75 <span class="ot">&lt;-</span> p75 <span class="sc">|&gt;</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(perp_race)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>race_p75 <span class="ot">&lt;-</span> p75 <span class="sc">|&gt;</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(perp_race) <span class="sc">|&gt;</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prop =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n))</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(race_p75, <span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">fct_reorder</span>(perp_race, prop), <span class="at">x =</span> prop)) <span class="sc">+</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"darkblue"</span>) <span class="sc">+</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Racial distribution of arrests in Precinct 75 (Brooklyn)"</span>,</span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Proportion"</span>, <span class="at">y =</span> <span class="st">"Race"</span>, <span class="at">subtitle =</span> <span class="st">"From January 1, 2026 to March 31, 2026"</span>) <span class="sc">+</span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>),</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="nypdarrests_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+<p><img src="nypdarrests_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>Out of the 2545 people arrested in Precinct 75, 68% were identified as Black, 18% were identified as White Hispanic, 6% were identified as Black hispanic, 4% were identified as White, 3% were identified as Asian/Pacific Islander, and less than 0% were identified as American Indian/Alaskan Native or unknown.</p>
+<p>As represented in the bar graph, out of the 2545 people arrested in Precinct 75, 68% were identified as Black, 18% were identified as White Hispanic, 6% were identified as Black hispanic, 4% were identified as White, 3% were identified as Asian/Pacific Islander, and less than 0% were identified as American Indian/Alaskan Native or unknown.</p>
 </section>
 <section id="what-is-the-racial-distribution-of-people-who-are-arrested-in-the-precinct-with-the-lowesr-number-of-arrests" class="level4" data-number="4.3.3.3">
 <h4 data-number="4.3.3.3" class="anchored" data-anchor-id="what-is-the-racial-distribution-of-people-who-are-arrested-in-the-precinct-with-the-lowesr-number-of-arrests"><span class="header-section-number">4.3.3.3</span> What is the racial distribution of people who are arrested in the precinct with the lowesr number of arrests?</h4>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>Precinct[<span class="fu">which.min</span>(data<span class="sc">$</span>arrests)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>Precinct[<span class="fu">which.min</span>(data<span class="sc">$</span>arrests)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 22</code></pre>
 </div>
 </div>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>p22 <span class="ot">&lt;-</span> arrests <span class="sc">|&gt;</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Precinct <span class="sc">==</span> <span class="dv">22</span>)</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>race_p22 <span class="ot">&lt;-</span> p22 <span class="sc">|&gt;</span></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(perp_race)</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>race_p22 <span class="ot">&lt;-</span> p22 <span class="sc">|&gt;</span></span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(perp_race) <span class="sc">|&gt;</span></span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prop =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n))</span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(race_p22, <span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">fct_reorder</span>(perp_race, prop), <span class="at">x =</span> prop)) <span class="sc">+</span></span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"darkblue"</span>) <span class="sc">+</span></span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Racial distribution of arrests in Precinct 22 (Manhattan)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>p22 <span class="ot">&lt;-</span> arrests <span class="sc">|&gt;</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Precinct <span class="sc">==</span> <span class="dv">22</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>race_p22 <span class="ot">&lt;-</span> p22 <span class="sc">|&gt;</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(perp_race)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>race_p22 <span class="ot">&lt;-</span> p22 <span class="sc">|&gt;</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(perp_race) <span class="sc">|&gt;</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prop =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n))</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(race_p22, <span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">fct_reorder</span>(perp_race, prop), <span class="at">x =</span> prop)) <span class="sc">+</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"darkblue"</span>) <span class="sc">+</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Racial distribution of arrests in Precinct 22 (Manhattan)"</span>, </span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Proportion"</span>, <span class="at">y =</span> <span class="st">"Race"</span>, <span class="at">subtitle =</span> <span class="st">"From January 1, 2026 to March 31, 2026"</span>) <span class="sc">+</span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>),</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="nypdarrests_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+<p><img src="nypdarrests_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>There were a total of 19 arrests in Precinct 22. Out of those arrests, 58% were people identified as hispanics, 32% were people identified as black, and 11% were people identified as white.</p>
+<p>As represented in the bar graph, there were a total of 19 arrests in Precinct 22. Out of those arrests, 58% were people identified as hispanics, 32% were people identified as black, and 11% were people identified as white.</p>
 </section>
 </section>
 </section>
 <section id="conclusion" class="level2" data-number="4.4">
 <h2 data-number="4.4" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">4.4</span> Conclusion</h2>
+<p>This project analyzed NYPD arrest data (YTD) to explore relationships between arrests and crime indicators, including shootings and NYPD complaints, as well as spatial patterns and racial composition across NYC. Overall, Brooklyn had the highest frequency of arrests and also contained the precinct with the highest number of arrests. On the other hand, Staten Island had the lowest total number of arrests, while Manhattan’s Precinct 22 recorded the lowest arrest count year to date. When comparing arrests with crime indicators, both shootings and NYPD complaints showed strong, positive correlations with arrest counts across precincts. However, the association between complaints and arrests was noticeably stronger and statistically significant, suggesting a stronger relationship between NYPD complaints and arrest activity at the precinct level. With respect to demographic patterns, individuals identified as Black represented the highest proportion of arrested across all five boroughs, although this pattern was not consistent across every individual precinct. These findings highlight variation in arrest composition across both geographic and demographic variables.</p>
+<p>My project had several limitations: the observed relationships are correlational and should NOT be interpreted as causal. While strong associations between variables are present, other unobserved variables, such as population size, socioeconomic conditions, policing presence, income distribution, and precinct-level demographic composition could also share a relationship with patterns observed in the NYPD arrest data. One other limitaition was time alignment with respect to the datasets; different dates outside the time covered in this dataset restrained the observations to only this year, restricting the ability to conduct a time series analysis. Future work could consider this analysis by including additional variables or sociopolitical context, particularly in relation to policing policy shifts such as stop-and-frisk.</p>
 
 
 </section>
