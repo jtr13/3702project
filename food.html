@@ -250,9 +250,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results"><span class="header-section-number">10.3</span> Results</a>
   <ul class="collapse">
-  <li><a href="#question-or-topic-1" id="toc-question-or-topic-1" class="nav-link" data-scroll-target="#question-or-topic-1"><span class="header-section-number">10.3.1</span> Question or topic 1</a></li>
-  <li><a href="#question-or-topic-2" id="toc-question-or-topic-2" class="nav-link" data-scroll-target="#question-or-topic-2"><span class="header-section-number">10.3.2</span> Question or topic 2</a></li>
-  <li><a href="#question-or-topic-3" id="toc-question-or-topic-3" class="nav-link" data-scroll-target="#question-or-topic-3"><span class="header-section-number">10.3.3</span> Question or topic 3</a></li>
+  <li><a href="#spatial-distribution-of-food-insecurity-in-nyc-2025" id="toc-spatial-distribution-of-food-insecurity-in-nyc-2025" class="nav-link" data-scroll-target="#spatial-distribution-of-food-insecurity-in-nyc-2025"><span class="header-section-number">10.3.1</span> Spatial Distribution of Food Insecurity in NYC, 2025</a></li>
+  <li><a href="#factors-behind-food-insecurity-in-nyc" id="toc-factors-behind-food-insecurity-in-nyc" class="nav-link" data-scroll-target="#factors-behind-food-insecurity-in-nyc"><span class="header-section-number">10.3.2</span> Factors Behind Food Insecurity in NYC</a></li>
+  <li><a href="#temporal-trends-of-food-insecurity-in-nyc-2023-2025" id="toc-temporal-trends-of-food-insecurity-in-nyc-2023-2025" class="nav-link" data-scroll-target="#temporal-trends-of-food-insecurity-in-nyc-2023-2025"><span class="header-section-number">10.3.3</span> Temporal Trends of Food Insecurity in NYC, 2023-2025</a></li>
   </ul></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">10.4</span> Conclusion</a></li>
   </ul>
@@ -283,8 +283,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Penny</p>
 <section id="introduction" class="level2" data-number="10.1">
 <h2 data-number="10.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">10.1</span> Introduction</h2>
-<p>Explain why you chose this topic, and the questions you are interested in studying. Provide context for readers who are not familiar with the topic.</p>
-<p>(suggested length: one paragraph)</p>
+<p>This project studies food insecurity percentage (estimated percentage of the population that is food insecure) across NYC Neighborhood Tabulation Areas from 2023 to 2025, focusing specifically on changes over time, differences between boroughs, and possible relationships with unemployment, vulnerable population scores, and racial composition. I chose this project partly because I used to be a food blogger, but more seriously because I became interested in the gap between food availability and access after attending an NYC Open Data Week event on food distribution in New York City. I learned that 90% of Americans live within a 10min drive of a Walmart. Although Walmart doesn’t have a strong presence in New York, other large grocery chains, such as Trader Joe’s and Whole Foods, have multiple locations across the city. New York also holds one of the nation’s largest food distribution centers at Hunts Point in the Bronx, which is geographically close to many other parts of the city that are yet called “food dessert,” like Harlem. Therefore, I want to develop a clearer picture of how food insecurity is distributed across New York City, what factors may be associated with it, and whether neighborhoods with high food insecurity percentage have improved over time.</p>
 </section>
 <section id="data" class="level2" data-number="10.2">
 <h2 data-number="10.2" class="anchored" data-anchor-id="data"><span class="header-section-number">10.2</span> Data</h2>
@@ -297,321 +296,155 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidycensus)</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>food <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data/Food/Food.csv"</span>)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>Neighborhood <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data/Food/2020_Neighborhood_Tabulation_Areas_(NTAs)_20260422.csv"</span>)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> Neighborhood <span class="sc">|&gt;</span> </span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>(<span class="at">wkt =</span> <span class="st">"the_geom"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">geometry =</span> the_geom) <span class="sc">|&gt;</span> </span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(food,</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"NTA2020"</span> <span class="ot">=</span> <span class="st">"Neighborhood.Tabulation.Area.NTA."</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">food_insecurity =</span> <span class="fu">parse_number</span>(Food.Insecure.Percentage), </span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>         <span class="at">unemployment_rate =</span> <span class="fu">parse_number</span>(Unemployment.Rate), </span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>         <span class="at">Year =</span> <span class="fu">as.factor</span>(Year),</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>         <span class="at">Supply.Gap..lbs.. =</span> <span class="fu">parse_number</span>(Supply.Gap..lbs..),</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>         <span class="at">unemployment_rate =</span> <span class="fu">case_when</span>(</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>      Year <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"2023"</span>, <span class="st">"2024"</span>) <span class="sc">~</span> unemployment_rate <span class="sc">*</span> <span class="dv">100</span>,</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>      Year <span class="sc">==</span> <span class="st">"2025"</span> <span class="sc">~</span> <span class="fu">floor</span>(unemployment_rate))) <span class="sc">|&gt;</span> </span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="st">`</span><span class="at">BoroCode</span><span class="st">`</span>, <span class="st">`</span><span class="at">CountyFIPS</span><span class="st">`</span>, <span class="st">`</span><span class="at">CDTA2020</span><span class="st">`</span>, <span class="st">`</span><span class="at">NTAAbbrev</span><span class="st">`</span>, <span class="st">`</span><span class="at">CDTAName</span><span class="st">`</span>, <span class="dv">13</span>, <span class="st">`</span><span class="at">Food.Insecure.Percentage</span><span class="st">`</span>, <span class="st">`</span><span class="at">Unemployment.Rate</span><span class="st">`</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(<span class="fu">c</span>(<span class="st">`</span><span class="at">Shape_Length</span><span class="st">`</span>, <span class="st">`</span><span class="at">Shape_Area</span><span class="st">`</span>,<span class="st">`</span><span class="at">geometry</span><span class="st">`</span>), <span class="at">.after =</span> <span class="fu">last_col</span>())</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggrepel)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>food <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data/Food/Food.csv"</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>Neighborhood <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data/Food/2020_Neighborhood_Tabulation_Areas_(NTAs)_20260422.csv"</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> Neighborhood <span class="sc">|&gt;</span> </span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>(<span class="at">wkt =</span> <span class="st">"the_geom"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">geometry =</span> the_geom) <span class="sc">|&gt;</span> </span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(food, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"NTA2020"</span> <span class="ot">=</span> <span class="st">"Neighborhood.Tabulation.Area.NTA."</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">food_insecurity =</span> <span class="fu">parse_number</span>(Food.Insecure.Percentage), </span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>         <span class="at">unemployment_rate =</span> <span class="fu">parse_number</span>(Unemployment.Rate), </span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>         <span class="at">Year =</span> <span class="fu">as.factor</span>(Year),</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>         <span class="at">Supply.Gap..lbs.. =</span> <span class="fu">parse_number</span>(Supply.Gap..lbs..),</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>         <span class="at">unemployment_rate =</span> <span class="fu">case_when</span>(</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>      Year <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"2023"</span>, <span class="st">"2024"</span>) <span class="sc">~</span> unemployment_rate <span class="sc">*</span> <span class="dv">100</span>,</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>      Year <span class="sc">==</span> <span class="st">"2025"</span> <span class="sc">~</span> <span class="fu">floor</span>(unemployment_rate))) <span class="sc">|&gt;</span> </span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="st">`</span><span class="at">BoroCode</span><span class="st">`</span>, <span class="st">`</span><span class="at">CountyFIPS</span><span class="st">`</span>, <span class="st">`</span><span class="at">CDTA2020</span><span class="st">`</span>, <span class="st">`</span><span class="at">NTAAbbrev</span><span class="st">`</span>, <span class="st">`</span><span class="at">CDTAName</span><span class="st">`</span>, <span class="dv">13</span>, <span class="st">`</span><span class="at">Food.Insecure.Percentage</span><span class="st">`</span>, <span class="st">`</span><span class="at">Unemployment.Rate</span><span class="st">`</span>)) </span>
 <span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>pl_2020 <span class="ot">&lt;-</span> <span class="fu">load_variables</span>(<span class="dv">2020</span>, <span class="st">"pl"</span>, <span class="at">cache =</span> T)</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>raw_race <span class="ot">&lt;-</span> <span class="fu">get_decennial</span>(<span class="at">geography =</span> <span class="st">"tract"</span>,</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>                           <span class="at">variables =</span> <span class="fu">c</span>(<span class="st">`</span><span class="at">Total</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"P1_001N"</span>,</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">`</span><span class="at">Hispanic or Latino</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"P2_002N"</span>,</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">`</span><span class="at">Black-alone</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"P2_006N"</span>,</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">`</span><span class="at">Asian-alone</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"P2_008N"</span>,</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">`</span><span class="at">White-alone</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"P2_005N"</span>),</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>                           <span class="at">state=</span><span class="st">'NY'</span>,</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>                          <span class="at">county =</span> <span class="fu">c</span>(<span class="st">'New York'</span>, <span class="st">'Kings'</span>, <span class="st">'Bronx'</span>, <span class="st">'Richmond'</span>,</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>                                     <span class="st">'Queens'</span>),</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>                           <span class="at">geometry =</span> T,</span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>                           <span class="at">year =</span> <span class="dv">2020</span>,</span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>                           <span class="at">output =</span> <span class="st">"wide"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>data <span class="sc">|&gt;</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Year) <span class="sc">|&gt;</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">min_vulnerablescore =</span> <span class="fu">min</span>(Vulnerable.Population.Score),</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_vulnerablescore =</span> <span class="fu">mean</span>(Vulnerable.Population.Score),</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_vulnerablescore =</span> <span class="fu">median</span>(Vulnerable.Population.Score),</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_vulnerablescore =</span> <span class="fu">max</span>(Vulnerable.Population.Score))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>
-  |                                                                            
-  |                                                                      |   0%
-  |                                                                            
-  |=                                                                     |   1%
-  |                                                                            
-  |==                                                                    |   3%
-  |                                                                            
-  |===                                                                   |   5%
-  |                                                                            
-  |====                                                                  |   5%
-  |                                                                            
-  |====                                                                  |   6%
-  |                                                                            
-  |=====                                                                 |   7%
-  |                                                                            
-  |======                                                                |   9%
-  |                                                                            
-  |=======                                                               |   9%
-  |                                                                            
-  |=======                                                               |  10%
-  |                                                                            
-  |========                                                              |  12%
-  |                                                                            
-  |=========                                                             |  12%
-  |                                                                            
-  |=========                                                             |  13%
-  |                                                                            
-  |==========                                                            |  14%
-  |                                                                            
-  |===========                                                           |  15%
-  |                                                                            
-  |===========                                                           |  16%
-  |                                                                            
-  |============                                                          |  17%
-  |                                                                            
-  |=============                                                         |  18%
-  |                                                                            
-  |==============                                                        |  20%
-  |                                                                            
-  |===============                                                       |  22%
-  |                                                                            
-  |================                                                      |  22%
-  |                                                                            
-  |=================                                                     |  25%
-  |                                                                            
-  |==================                                                    |  25%
-  |                                                                            
-  |===================                                                   |  27%
-  |                                                                            
-  |===================                                                   |  28%
-  |                                                                            
-  |====================                                                  |  28%
-  |                                                                            
-  |=====================                                                 |  30%
-  |                                                                            
-  |======================                                                |  31%
-  |                                                                            
-  |======================                                                |  32%
-  |                                                                            
-  |========================                                              |  34%
-  |                                                                            
-  |========================                                              |  35%
-  |                                                                            
-  |=========================                                             |  36%
-  |                                                                            
-  |==========================                                            |  37%
-  |                                                                            
-  |==========================                                            |  38%
-  |                                                                            
-  |===========================                                           |  38%
-  |                                                                            
-  |===========================                                           |  39%
-  |                                                                            
-  |=============================                                         |  41%
-  |                                                                            
-  |===============================                                       |  44%
-  |                                                                            
-  |================================                                      |  46%
-  |                                                                            
-  |=================================                                     |  47%
-  |                                                                            
-  |===================================                                   |  50%
-  |                                                                            
-  |====================================                                  |  51%
-  |                                                                            
-  |=====================================                                 |  53%
-  |                                                                            
-  |======================================                                |  54%
-  |                                                                            
-  |=======================================                               |  55%
-  |                                                                            
-  |=======================================                               |  56%
-  |                                                                            
-  |========================================                              |  57%
-  |                                                                            
-  |=========================================                             |  59%
-  |                                                                            
-  |==========================================                            |  59%
-  |                                                                            
-  |===========================================                           |  62%
-  |                                                                            
-  |===============================================                       |  67%
-  |                                                                            
-  |================================================                      |  68%
-  |                                                                            
-  |=================================================                     |  70%
-  |                                                                            
-  |===================================================                   |  73%
-  |                                                                            
-  |====================================================                  |  74%
-  |                                                                            
-  |======================================================                |  77%
-  |                                                                            
-  |======================================================                |  78%
-  |                                                                            
-  |==========================================================            |  83%
-  |                                                                            
-  |============================================================          |  86%
-  |                                                                            
-  |===============================================================       |  91%
-  |                                                                            
-  |==================================================================    |  94%
-  |                                                                            
-  |======================================================================|  99%
-  |                                                                            
-  |======================================================================| 100%</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>race <span class="ot">&lt;-</span> raw_race <span class="sc">%&gt;%</span> </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Hispanic or Latino (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Hispanic or Latino</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total</span><span class="st">`</span>,</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Black-alone (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Black-alone</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total</span><span class="st">`</span>,</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Asian-alone (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Asian-alone</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total</span><span class="st">`</span>,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">White-alone (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">White-alone</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total</span><span class="st">`</span>)</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>race <span class="ot">&lt;-</span> raw_race <span class="sc">%&gt;%</span> </span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Hispanic or Latino (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Hispanic or Latino</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total</span><span class="st">`</span>,</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Hispanic or Latino (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">is.nan</span>(<span class="st">`</span><span class="at">Hispanic or Latino (%)</span><span class="st">`</span>),</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>                                                <span class="cn">NA</span>, <span class="st">`</span><span class="at">Hispanic or Latino (%)</span><span class="st">`</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Black-alone (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Black-alone</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total</span><span class="st">`</span>,</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Black-alone (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">is.nan</span>(<span class="st">`</span><span class="at">Black-alone (%)</span><span class="st">`</span>),</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>                                           <span class="cn">NA</span>, <span class="st">`</span><span class="at">Black-alone (%)</span><span class="st">`</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Asian-alone (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Asian-alone</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total</span><span class="st">`</span>,</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Asian-alone (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">is.nan</span>(<span class="st">`</span><span class="at">Asian-alone (%)</span><span class="st">`</span>),</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>                                           <span class="cn">NA</span>, <span class="st">`</span><span class="at">Asian-alone (%)</span><span class="st">`</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">White-alone (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">White-alone</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total</span><span class="st">`</span>,</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">White-alone (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">is.nan</span>(<span class="st">`</span><span class="at">White-alone (%)</span><span class="st">`</span>),</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>                                    <span class="cn">NA</span>, <span class="st">`</span><span class="at">White-alone (%)</span><span class="st">`</span>))</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">st_set_crs</span>(data, <span class="dv">4326</span>)</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>race_4326 <span class="ot">&lt;-</span>  <span class="fu">st_transform</span>(race, <span class="dv">4326</span>)</span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>data_clean <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> <span class="fu">select</span>(NTAName, BoroName, geometry) <span class="sc">|&gt;</span></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(NTAName, BoroName, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>race_nabes <span class="ot">&lt;-</span> race_4326 <span class="sc">|&gt;</span></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_join</span>(data_clean, </span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>          <span class="at">left =</span> <span class="cn">TRUE</span>, <span class="co"># left -&gt; defines it as left_join -- meaning all census tract are kept</span></span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>          <span class="at">join =</span> st_intersects, <span class="co"># join -&gt; defines the join definition as "if they intersect"</span></span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>          <span class="at">largest =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>race_complete <span class="ot">&lt;-</span> race_nabes <span class="sc">|&gt;</span></span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_drop_geometry</span>()  <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(GEOID, NAME, BoroName)) <span class="sc">|&gt;</span></span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(NTAName) <span class="sc">|&gt;</span> </span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Borough =</span> <span class="fu">first</span>(BoroName),</span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">Total</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">Total</span><span class="st">`</span>),</span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">Total Hispanic or Latino</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">Hispanic or Latino</span><span class="st">`</span>),</span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">Total Black-alone</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">Black-alone</span><span class="st">`</span>),</span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">Total Asian-alone</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">Asian-alone</span><span class="st">`</span>),</span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">Total White-alone</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">White-alone</span><span class="st">`</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Total Hispanic or Latino (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">percent</span>(<span class="st">`</span><span class="at">Total Hispanic or Latino</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total</span><span class="st">`</span>, <span class="at">accuracy =</span> <span class="dv">1</span>L),</span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Total Black-alone (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">percent</span>(<span class="st">`</span><span class="at">Total Black-alone</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total</span><span class="st">`</span>, <span class="at">accuracy =</span> <span class="dv">1</span>L),</span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Total Asian-alone (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">percent</span>(<span class="st">`</span><span class="at">Total Asian-alone</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total</span><span class="st">`</span>, <span class="at">accuracy =</span> <span class="dv">1</span>L),</span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Total White-alone (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">percent</span>(<span class="st">`</span><span class="at">Total White-alone</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total</span><span class="st">`</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Borough, NTAName, Total, <span class="st">`</span><span class="at">Total Hispanic or Latino (%)</span><span class="st">`</span>, <span class="st">`</span><span class="at">Total Black-alone (%)</span><span class="st">`</span>,</span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Total Asian-alone (%)</span><span class="st">`</span>, <span class="st">`</span><span class="at">Total White-alone (%)</span><span class="st">`</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-error">
-<pre><code>Error in `summarise()`:
-ℹ In argument: `Borough = first(BoroName)`.
-ℹ In group 1: `NTAName = "Allerton"`.
-Caused by error:
-! object 'BoroName' not found</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> <span class="fu">left_join</span>(race_complete, <span class="at">by =</span> <span class="st">"NTAName"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-error">
-<pre><code>Error:
-! object 'race_complete' not found</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Simple feature collection with 6 features and 13 fields
+<pre><code>Simple feature collection with 4 features and 5 fields
 Geometry type: MULTIPOLYGON
 Dimension:     XY
-Bounding box:  xmin: -73.97007 ymin: 40.70547 xmax: -73.93213 ymax: 40.73913
-Geodetic CRS:  WGS 84
-  BoroName NTA2020      NTAName NTAType Year Supply.Gap..lbs..
-1 Brooklyn  BK0101   Greenpoint       0 2025         1153881.9
-2 Brooklyn  BK0101   Greenpoint       0 2024          897731.1
-3 Brooklyn  BK0101   Greenpoint       0 2023          738933.8
-4 Brooklyn  BK0102 Williamsburg       0 2025         1011421.1
-5 Brooklyn  BK0102 Williamsburg       0 2024         1355335.7
-6 Brooklyn  BK0102 Williamsburg       0 2023         1091178.2
-  Vulnerable.Population.Score Weighted.Score Rank food_insecurity
-1                        0.36       6.811714   44           15.74
-2                        0.12       5.649150   82           12.63
-3                        0.12       5.643590   69           10.66
-4                        0.38       6.326930   75           16.48
-5                        0.13       6.144926   42           16.60
-6                        0.13       6.190055   35           11.53
-  unemployment_rate   Shape_Length      Shape_Area
-1                 7 28,919.5607283 35,321,808.4385
-2                 7 28,919.5607283 35,321,808.4385
-3                 7 28,919.5607283 35,321,808.4385
-4                 6 28,134.0825628 28,852,852.9485
-5                 6 28,134.0825628 28,852,852.9485
-6                 6 28,134.0825628 28,852,852.9485
-                        geometry
-1 MULTIPOLYGON (((-73.93213 4...
-2 MULTIPOLYGON (((-73.93213 4...
-3 MULTIPOLYGON (((-73.93213 4...
-4 MULTIPOLYGON (((-73.95814 4...
-5 MULTIPOLYGON (((-73.95814 4...
-6 MULTIPOLYGON (((-73.95814 4...</code></pre>
+Bounding box:  xmin: -74.25559 ymin: 40.49613 xmax: -73.70001 ymax: 40.91553
+CRS:           NA
+# A tibble: 4 × 6
+  Year  min_vulnerablescore mean_vulnerablescore median_vulnerablescore
+  &lt;fct&gt;               &lt;dbl&gt;                &lt;dbl&gt;                  &lt;dbl&gt;
+1 2023                 0.06                0.154                   0.14
+2 2024                 0.07                0.158                   0.15
+3 2025                 0.34                0.529                   0.53
+4 &lt;NA&gt;                NA                  NA                      NA   
+# ℹ 2 more variables: max_vulnerablescore &lt;dbl&gt;, geometry &lt;MULTIPOLYGON&gt;</code></pre>
 </div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Year) <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">scaled_vulpop =</span> (Vulnerable.Population.Score<span class="sc">-</span><span class="fu">mean</span>(Vulnerable.Population.Score))<span class="sc">/</span><span class="fu">sd</span>(Vulnerable.Population.Score)) <span class="sc">|&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pl_2020 <span class="ot">&lt;-</span> <span class="fu">load_variables</span>(<span class="dv">2020</span>, <span class="st">"pl"</span>, <span class="at">cache =</span> T)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>raw_race <span class="ot">&lt;-</span> <span class="fu">get_decennial</span>(<span class="at">geography =</span> <span class="st">"tract"</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">variables =</span> <span class="fu">c</span>(<span class="st">`</span><span class="at">Total</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"P1_001N"</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">`</span><span class="at">Hispanic or Latino</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"P2_002N"</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">`</span><span class="at">Black-alone</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"P2_006N"</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">`</span><span class="at">Asian-alone</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"P2_008N"</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">`</span><span class="at">White-alone</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"P2_005N"</span>),</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>                           <span class="at">state=</span><span class="st">'NY'</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>                          <span class="at">county =</span> <span class="fu">c</span>(<span class="st">'New York'</span>, <span class="st">'Kings'</span>, <span class="st">'Bronx'</span>, <span class="st">'Richmond'</span>,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>                                     <span class="st">'Queens'</span>),</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>                           <span class="at">geometry =</span> T,</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>                           <span class="at">year =</span> <span class="dv">2020</span>,</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>                           <span class="at">output =</span> <span class="st">"wide"</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>race <span class="ot">&lt;-</span> raw_race <span class="sc">%&gt;%</span> </span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Hispanic or Latino (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Hispanic or Latino</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total</span><span class="st">`</span>,</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Black-alone (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Black-alone</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total</span><span class="st">`</span>,</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Asian-alone (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Asian-alone</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total</span><span class="st">`</span>,</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">White-alone (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">White-alone</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total</span><span class="st">`</span>)</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>race <span class="ot">&lt;-</span> raw_race <span class="sc">%&gt;%</span> </span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Hispanic or Latino (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Hispanic or Latino</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total</span><span class="st">`</span>,</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Hispanic or Latino (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">is.nan</span>(<span class="st">`</span><span class="at">Hispanic or Latino (%)</span><span class="st">`</span>),</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>                                                <span class="cn">NA</span>, <span class="st">`</span><span class="at">Hispanic or Latino (%)</span><span class="st">`</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Black-alone (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Black-alone</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total</span><span class="st">`</span>,</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Black-alone (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">is.nan</span>(<span class="st">`</span><span class="at">Black-alone (%)</span><span class="st">`</span>),</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>                                           <span class="cn">NA</span>, <span class="st">`</span><span class="at">Black-alone (%)</span><span class="st">`</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Asian-alone (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Asian-alone</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total</span><span class="st">`</span>,</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Asian-alone (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">is.nan</span>(<span class="st">`</span><span class="at">Asian-alone (%)</span><span class="st">`</span>),</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>                                           <span class="cn">NA</span>, <span class="st">`</span><span class="at">Asian-alone (%)</span><span class="st">`</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">White-alone (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">White-alone</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total</span><span class="st">`</span>,</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">White-alone (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">is.nan</span>(<span class="st">`</span><span class="at">White-alone (%)</span><span class="st">`</span>),</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>                                    <span class="cn">NA</span>, <span class="st">`</span><span class="at">White-alone (%)</span><span class="st">`</span>))</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>race_4326 <span class="ot">&lt;-</span>  <span class="fu">st_transform</span>(race, <span class="dv">4326</span>)</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>data_clean <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> <span class="fu">st_set_crs</span>(<span class="dv">4326</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(NTAName, BoroName, geometry) <span class="sc">|&gt;</span></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(NTAName, BoroName, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>race_nabes <span class="ot">&lt;-</span> race_4326 <span class="sc">|&gt;</span></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_join</span>(data_clean, </span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>          <span class="at">left =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>          <span class="at">join =</span> st_intersects,</span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>          <span class="at">largest =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>race_complete <span class="ot">&lt;-</span> race_nabes <span class="sc">|&gt;</span></span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_drop_geometry</span>()  <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(GEOID, NAME)) <span class="sc">|&gt;</span></span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(NTAName) <span class="sc">|&gt;</span> </span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Borough =</span> <span class="fu">first</span>(BoroName),</span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">Total</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">Total</span><span class="st">`</span>),</span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">Total Hispanic or Latino</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">Hispanic or Latino</span><span class="st">`</span>),</span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">Total Black-alone</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">Black-alone</span><span class="st">`</span>),</span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">Total Asian-alone</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">Asian-alone</span><span class="st">`</span>),</span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">Total White-alone</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">White-alone</span><span class="st">`</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Total Hispanic or Latino (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Total Hispanic or Latino</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total</span><span class="st">`</span><span class="sc">*</span><span class="dv">100</span>,</span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Total Black-alone (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Total Black-alone</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total</span><span class="st">`</span><span class="sc">*</span><span class="dv">100</span>,</span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Total Asian-alone (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Total Asian-alone</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total</span><span class="st">`</span><span class="sc">*</span><span class="dv">100</span>,</span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Total White-alone (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">Total White-alone</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">Total</span><span class="st">`</span><span class="sc">*</span><span class="dv">100</span>, </span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Total Other-alone (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="dv">100</span><span class="sc">-</span><span class="st">`</span><span class="at">Total Hispanic or Latino (%)</span><span class="st">`</span><span class="sc">-</span><span class="st">`</span><span class="at">Total Black-alone (%)</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">Total Asian-alone (%)</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">Total White-alone (%)</span><span class="st">`</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Borough, NTAName, Total, <span class="st">`</span><span class="at">Total Hispanic or Latino (%)</span><span class="st">`</span>, </span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Total Black-alone (%)</span><span class="st">`</span>,</span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Total Asian-alone (%)</span><span class="st">`</span>, </span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Total White-alone (%)</span><span class="st">`</span>, </span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">Total Other-alone (%)</span><span class="st">`</span>)</span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> <span class="fu">left_join</span>(race_complete, <span class="at">by =</span> <span class="st">"NTAName"</span>) <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span>Borough) <span class="sc">|&gt;</span></span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(<span class="fu">c</span>(<span class="st">`</span><span class="at">Shape_Length</span><span class="st">`</span>, <span class="st">`</span><span class="at">Shape_Area</span><span class="st">`</span>,<span class="st">`</span><span class="at">geometry</span><span class="st">`</span>), <span class="at">.after =</span> <span class="fu">last_col</span>())</span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <section id="description" class="level3" data-number="10.2.1">
 <h3 data-number="10.2.1" class="anchored" data-anchor-id="description"><span class="header-section-number">10.2.1</span> Description</h3>
-<p>Describe how the data are collected and by whom. Describe the format of the data, the frequency of updates, dimensions, and any other relevant information. Note any issues / problems with the data, either known or that you discover. Carefully document your sources with links to the precise data sources that you used.</p>
-<p>(suggested length: one paragraph)</p>
+<p>For this project, I merged data from three sources.</p>
+<ol type="1">
+<li><p>The first source is the Emergency Food Supply Gap dataset, collected by the Mayor’s Office of Food Policy. This dataset is updated annually and contains information on food insecurity, unemployment rates, vulnerable population scores, and food supply gaps for NYC Neighborhood Tabulation Areas from 2023 to 2025. It has 786 rows and 9 columns. I cleaned the unemployment rate column by converting the 2023 and 2024 values from proportions to percentages. The vulnerable population score also shows a scale shift in 2025 for unknown reason, so I standardized it into Z-Scores within each year.</p></li>
+<li><p>The second source is the 2020 Neighborhood Tabulation Areas (NTAs) dataset collected by Department of City Planning. This dataset is updated quarterly and provides geographic boundary information for NTAs, with 262 rows and 12 columns. Both datasets were published through NYC Open Data and downloaded as CSV files.<br>
+</p></li>
+<li><p>The third source are racial demographic data I pulled from the 2020 Decennial Census file using the tidycensus package, because NYC Open Data does not provide racial demographic data at the NTA level. It reflects tract-level racial and ethnic population counts, including total population, Hispanic or Latino population, Black-alone population, Asian-alone population, and White-alone population. I converted these tract-level counts into NTA-level by spatially joining census tracts to 2020 NTAs.</p></li>
+</ol>
+<p>Although these three sources refer to data from different years, this does not create a major issue for this project. While the food insecurity variables cover period from 2023 to 2025, the data are reported using 2020 NTA boundaries, which makes them compatible with the 2020 NTA shapefile. The racial composition data collected in 2020 are simply treated as fixed neighborhood-level characteristics in this analysis.</p>
+<p>The final dataset is an sf spatial dataframe after I cleaned, merged, and selected relevant columns from the three sources, with one row for each neighborhood-year observation. The dataset contains 591 rows and 21 columns.</p>
+<p><a href="https://data.cityofnewyork.us/City-Government/Emergency-Food-Supply-Gap/4kc9-zrs2/about_data">NYC Open Data Emergency Food Supply Gap</a></p>
+<p><a href="https://data.cityofnewyork.us/City-Government/2020-Neighborhood-Tabulation-Areas-NTAs-/9nt8-h7nd/about_data">2020 Neighborhood Tabulation Areas</a></p>
+<p><a href="https://rpubs.com/bfadila/nyc_race_tract_2020">Guides I followed to pull and spatially merge the 2020 Decennial Census data</a></p>
 </section>
 <section id="missing-value-analysis" class="level3" data-number="10.2.2">
 <h3 data-number="10.2.2" class="anchored" data-anchor-id="missing-value-analysis"><span class="header-section-number">10.2.2</span> Missing value analysis</h3>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">|&gt;</span> </span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span> (<span class="at">SuppGap =</span> Supply.Gap..lbs.., <span class="at">VulnPopu =</span> Vulnerable.Population.Score, <span class="at">WeigScor =</span> Weighted.Score, <span class="at">FoodInsc =</span> food_insecurity, <span class="at">EmplRate =</span> unemployment_rate) <span class="sc">|&gt;</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_missing</span>(<span class="at">num_char =</span> <span class="dv">7</span>, <span class="at">max_cols =</span> <span class="dv">8</span>, <span class="at">max_rows =</span> <span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="food_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>data_missing <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">missing_value =</span> <span class="fu">is.na</span>(Year))</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>data_missing <span class="sc">|&gt;</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> missing_value)) <span class="sc">+</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"FALSE"</span> <span class="ot">=</span> <span class="st">"#B3B3B3"</span>,<span class="st">"TRUE"</span> <span class="ot">=</span> <span class="st">"#B49BE6"</span>)) <span class="sc">+</span> </span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_sf_text</span>(<span class="at">data =</span> data_missing <span class="sc">|&gt;</span> <span class="fu">filter</span>(missing_value <span class="sc">==</span> <span class="cn">TRUE</span>), <span class="fu">aes</span>(<span class="at">label =</span> NTAType), <span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span> </span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Neighborhoods with Missing Values"</span>,</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Longtitude"</span>, </span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Latitude"</span>,</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"Missing value"</span>,</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"NTAType: Unlabeled = Residential; 5 = Rikers Island; 6 = Other Special Areas; 7 = Cemetery; 8 = Airport; 9 = Park"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="food_files/figure-html/unnamed-chunk-2-2.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>Describe any patterns you discover in missing values. If no values are missing, a graph should still be included showing that.</p>
-<p>(suggested: 1-2 graphs plus commentary)</p>
-</section>
-</section>
-<section id="results" class="level2" data-number="10.3">
-<h2 data-number="10.3" class="anchored" data-anchor-id="results"><span class="header-section-number">10.3</span> Results</h2>
-<section id="question-or-topic-1" class="level3" data-number="10.3.1">
-<h3 data-number="10.3.1" class="anchored" data-anchor-id="question-or-topic-1"><span class="header-section-number">10.3.1</span> Question or topic 1</h3>
-<div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">|&gt;</span> <span class="fu">filter</span>(Year <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"2023"</span>, <span class="st">"2024"</span>, <span class="st">"2025"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> food_insecurity)) <span class="sc">+</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_distiller</span>(<span class="at">palette =</span> <span class="st">"Greens"</span>, <span class="at">direction =</span> <span class="dv">1</span>,<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">40</span>), </span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">40</span>, <span class="at">by =</span> <span class="dv">10</span>)) <span class="sc">+</span> </span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Year, <span class="at">nrow =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Food Insecurity Percentage by Neighborhood, 2023-2025"</span>, </span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Longitude"</span>,</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Latitude"</span>, </span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Food Insecurity Percentage"</span>) <span class="sc">+</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">|&gt;</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span> (<span class="at">SuGa =</span> Supply.Gap..lbs.., </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">VuPo =</span> Vulnerable.Population.Score, </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">WeSc =</span> Weighted.Score, </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">FoIn =</span> food_insecurity, </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">EmRa =</span> unemployment_rate, </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">ScVu =</span> scaled_vulpop, </span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">Hisp =</span> <span class="st">`</span><span class="at">Total Hispanic or Latino (%)</span><span class="st">`</span>, </span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">Blac =</span> <span class="st">`</span><span class="at">Total Black-alone (%)</span><span class="st">`</span>, </span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>          <span class="at">Asia =</span> <span class="st">`</span><span class="at">Total Asian-alone (%)</span><span class="st">`</span>, </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>          <span class="at">Whit =</span> <span class="st">`</span><span class="at">Total White-alone (%)</span><span class="st">`</span>, </span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>          <span class="at">Othe =</span> <span class="st">`</span><span class="at">Total Other-alone (%)</span><span class="st">`</span>) <span class="sc">|&gt;</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_missing</span>(<span class="at">num_char =</span> <span class="dv">4</span>, <span class="at">max_cols =</span> <span class="dv">14</span>, <span class="at">max_rows =</span> <span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -619,20 +452,18 @@ Geodetic CRS:  WGS 84
 </figure>
 </div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>data_diff <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="st">"Year"</span>, <span class="st">"food_insecurity"</span>) <span class="sc">|&gt;</span> <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Year, <span class="at">values_from =</span> food_insecurity) <span class="sc">|&gt;</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">2023-2024</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">2024</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">2023</span><span class="st">`</span>, <span class="st">`</span><span class="at">2024-2025</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">2025</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">2024</span><span class="st">`</span>) <span class="sc">|&gt;</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(<span class="st">`</span><span class="at">2023-2024</span><span class="st">`</span>, <span class="st">`</span><span class="at">2024-2025</span><span class="st">`</span>),</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"Year_diff"</span>,</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"food_diff"</span>)</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>data_diff <span class="sc">|&gt;</span> <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> <span class="st">`</span><span class="at">food_diff</span><span class="st">`</span>)) <span class="sc">+</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient2</span>(<span class="at">low =</span> <span class="st">"#2166AC"</span>, <span class="at">mid =</span> <span class="st">"white"</span>,</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>                        <span class="at">high =</span> <span class="st">"#B2182B"</span>, <span class="at">midpoint =</span> <span class="dv">0</span>, <span class="at">limits =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">20</span>, <span class="dv">20</span>)) <span class="sc">+</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Year_diff, <span class="at">nrow =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Change in Food Insecurity Percentage Points by Neighborhood"</span>, </span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Longitude"</span>,</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Latitude"</span>, </span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Change in % points"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>data_missing <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">missing_value =</span> <span class="fu">if_any</span>(<span class="fu">c</span>(Year, food_insecurity, unemployment_rate, Vulnerable.Population.Score, <span class="st">`</span><span class="at">Total Hispanic or Latino (%)</span><span class="st">`</span>, <span class="st">`</span><span class="at">Total Black-alone (%)</span><span class="st">`</span>, <span class="st">`</span><span class="at">Total Asian-alone (%)</span><span class="st">`</span>, <span class="st">`</span><span class="at">Total White-alone (%)</span><span class="st">`</span>, <span class="st">`</span><span class="at">Total Other-alone (%)</span><span class="st">`</span>, <span class="st">`</span><span class="at">Total</span><span class="st">`</span>), is.na))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>data_missing <span class="sc">|&gt;</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> missing_value)) <span class="sc">+</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"FALSE"</span> <span class="ot">=</span> <span class="st">"#B3B3B3"</span>,<span class="st">"TRUE"</span> <span class="ot">=</span> <span class="st">"#B49BE6"</span>)) <span class="sc">+</span> </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_sf_text</span>(<span class="at">data =</span> data_missing <span class="sc">|&gt;</span> <span class="fu">filter</span>(missing_value <span class="sc">==</span> <span class="cn">TRUE</span>), <span class="fu">aes</span>(<span class="at">label =</span> NTAType), <span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span> </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Neighborhoods with Missing Values"</span>,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Longtitude"</span>, </span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Latitude"</span>,</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"Missing value"</span>,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"NTAType: Unlabeled = Residential; 5 = Rikers Island; 6 = Other Special Areas; 7 = Cemetery; 8 = Airport; 9 = Park"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -641,30 +472,27 @@ Geodetic CRS:  WGS 84
 </div>
 </div>
 </div>
+<p>Most missing values are concentrated in food insecurity and population vulnerability related indicators, as suggested in Pattern 2. Pattern 3 and 4 are missing those same variables plus the race and ethnicity percentages and the total population count. I mapped all NTAs with missing values onto a spatial map and labelled them with NTAType, which is the one digit code assigned to an NTA to distinguish if it is residential. We then found that neighborhoods with missing values are all labeled as non-residential areas: 9 (Park), 7 (Cemetery), 8 (Airport), 6 (Other Special Areas), and 5 (Rikers Island). These are places where no one lives, so the there are no demographics or food insecurity and population vulnerability estimates. When conducting some of the later analyses that do not involve spatial maps, I filter out these non-residential NTAs before computing, just to prevent them from distorting the results.</p>
 </section>
-<section id="question-or-topic-2" class="level3" data-number="10.3.2">
-<h3 data-number="10.3.2" class="anchored" data-anchor-id="question-or-topic-2"><span class="header-section-number">10.3.2</span> Question or topic 2</h3>
+</section>
+<section id="results" class="level2" data-number="10.3">
+<h2 data-number="10.3" class="anchored" data-anchor-id="results"><span class="header-section-number">10.3</span> Results</h2>
+<section id="spatial-distribution-of-food-insecurity-in-nyc-2025" class="level3" data-number="10.3.1">
+<h3 data-number="10.3.1" class="anchored" data-anchor-id="spatial-distribution-of-food-insecurity-in-nyc-2025"><span class="header-section-number">10.3.1</span> Spatial Distribution of Food Insecurity in NYC, 2025</h3>
+<section id="how-does-the-distribution-of-food-insecurity-vary-across-new-york-city-boroughs-in-2025" class="level4" data-number="10.3.1.1">
+<h4 data-number="10.3.1.1" class="anchored" data-anchor-id="how-does-the-distribution-of-food-insecurity-vary-across-new-york-city-boroughs-in-2025"><span class="header-section-number">10.3.1.1</span> How does the distribution of food insecurity vary across New York City boroughs in 2025?</h4>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> <span class="fu">filter</span> (Year <span class="sc">==</span> <span class="st">"2025"</span>) <span class="sc">|&gt;</span> <span class="fu">group_by</span> (BoroName) <span class="sc">|&gt;</span> </span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> food_insecurity, <span class="at">y =</span> <span class="fu">reorder</span>(BoroName, food_insecurity, median))) <span class="sc">+</span> </span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density_ridges</span>(<span class="at">fill =</span> <span class="st">"blue"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">scale =</span> <span class="dv">1</span>) <span class="sc">+</span> </span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Food Insecurity Percentage"</span>, <span class="at">y =</span> <span class="st">"Borough"</span>)</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> <span class="fu">filter</span> (Year <span class="sc">==</span> <span class="st">"2025"</span>) <span class="sc">|&gt;</span> <span class="fu">group_by</span>(BoroName) <span class="sc">|&gt;</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> food_insecurity, <span class="at">y =</span> <span class="fu">reorder</span>(BoroName, food_insecurity, median))) <span class="sc">+</span></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">40</span>)) <span class="sc">+</span> </span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Food Insecurity Percentage"</span>, <span class="at">y =</span> <span class="st">"Borough"</span>)</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span> p2 <span class="sc">+</span> <span class="fu">plot_annotation</span>(<span class="at">title =</span> <span class="st">"Food Insecurity by Borough, 2025"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-error">
-<pre><code>Error in `plot_annotation()`:
-! could not find function "plot_annotation"</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">|&gt;</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Year, <span class="at">y =</span> food_insecurity, <span class="at">group =</span> NTAName)) <span class="sc">+</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> BoroName) <span class="sc">+</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Food Insecurity Trajectories by Borough"</span>, <span class="at">x =</span> <span class="st">"Year"</span>, <span class="at">y =</span> <span class="st">"Food Insecurity Percentage"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> <span class="fu">filter</span> (Year <span class="sc">==</span> <span class="st">"2025"</span>) <span class="sc">|&gt;</span> <span class="fu">group_by</span> (BoroName) <span class="sc">|&gt;</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> food_insecurity, <span class="at">y =</span> <span class="fu">reorder</span>(BoroName, food_insecurity, median))) <span class="sc">+</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density_ridges</span>(<span class="at">fill =</span> <span class="st">"blue"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">scale =</span> <span class="dv">1</span>) <span class="sc">+</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Food Insecurity Percentage"</span>, <span class="at">y =</span> <span class="st">"Borough"</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> <span class="fu">filter</span> (Year <span class="sc">==</span> <span class="st">"2025"</span>) <span class="sc">|&gt;</span> <span class="fu">group_by</span>(BoroName) <span class="sc">|&gt;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> food_insecurity, <span class="at">y =</span> <span class="fu">reorder</span>(BoroName, food_insecurity, median))) <span class="sc">+</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">40</span>)) <span class="sc">+</span> </span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Food Insecurity Percentage"</span>, <span class="at">y =</span> <span class="st">"Borough"</span>)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span> p2 <span class="sc">+</span> <span class="fu">plot_annotation</span>(<span class="at">title =</span> <span class="st">"Food Insecurity by Borough, 2025"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -672,30 +500,20 @@ Geodetic CRS:  WGS 84
 </figure>
 </div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">|&gt;</span>  <span class="fu">filter</span>(Year <span class="sc">==</span> <span class="st">"2025"</span>) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(food_insecurity)) <span class="sc">|&gt;</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">NTA_Bor =</span> <span class="fu">paste0</span>(NTAName, <span class="st">","</span>, BoroName)) <span class="sc">|&gt;</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">20</span>) <span class="sc">|&gt;</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> food_insecurity, <span class="at">y =</span> <span class="fu">reorder</span>(NTAName, food_insecurity))) <span class="sc">+</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"blue"</span>) <span class="sc">+</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Top 20 Neighborhoods by Food Insecurity, 2025"</span>,</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Food Insecurity Percentage"</span>,</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Neighborhood"</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="food_files/figure-html/unnamed-chunk-4-2.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
-</figure>
 </div>
-</div>
-</div>
+<p>The ridgeline plot and boxplot show that the Bronx has the highest overall food insecurity in 2025. Its median is around 25%, which is higher than the upper quartile of every other borough. Despite having the widest spread, its minimum is still greater than other boroughs’, while its maximum reaches as high as around 40%. Staten Island and Queens have the lowest median for food insecurity levels. Queens shows two low outliers near 5%, which suggests that a couple of neighborhoods are significantly more secure in food than others in the City. Brooklyn and Manhattan fall in the middle. Manhattan has a more irregular shape with multiple modes, which indicates that Manhattan neighborhoods cluster into different groups of food insecurity levels, rather than having relatively similar food insecurity levels like most Brooklyn neighborhoods.</p>
 </section>
-<section id="question-or-topic-3" class="level3" data-number="10.3.3">
-<h3 data-number="10.3.3" class="anchored" data-anchor-id="question-or-topic-3"><span class="header-section-number">10.3.3</span> Question or topic 3</h3>
+<section id="which-nyc-neighborhoods-had-the-highest-food-insecurity-percentages-in-2025" class="level4" data-number="10.3.1.2">
+<h4 data-number="10.3.1.2" class="anchored" data-anchor-id="which-nyc-neighborhoods-had-the-highest-food-insecurity-percentages-in-2025"><span class="header-section-number">10.3.1.2</span> Which NYC neighborhoods had the highest food insecurity percentages in 2025?</h4>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">|&gt;</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> unemployment_rate, <span class="at">y =</span> food_insecurity, <span class="at">color =</span> Year)) <span class="sc">+</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.5</span>, <span class="at">height =</span> <span class="dv">0</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>,<span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> </span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Unemployment Rate"</span>,<span class="at">y =</span> <span class="st">"Food Insecurity"</span>,<span class="at">color =</span> <span class="st">"Year"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">|&gt;</span>  <span class="fu">filter</span>(Year <span class="sc">==</span> <span class="st">"2025"</span>) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(food_insecurity)) <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">NTA_Bor =</span> <span class="fu">paste0</span>(NTAName, <span class="st">","</span>, BoroName)) <span class="sc">|&gt;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">20</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> food_insecurity, <span class="at">y =</span> <span class="fu">reorder</span>(NTA_Bor, food_insecurity))) <span class="sc">+</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"blue"</span>) <span class="sc">+</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Top 20 Neighborhoods by Food Insecurity, 2025"</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Food Insecurity Percentage"</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Neighborhood"</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -703,52 +521,262 @@ Geodetic CRS:  WGS 84
 </figure>
 </div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> <span class="fu">group_by</span>(Year) <span class="sc">|&gt;</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">scaled_vulpop =</span> (Vulnerable.Population.Score<span class="sc">-</span><span class="fu">mean</span>(Vulnerable.Population.Score))<span class="sc">/</span><span class="fu">sd</span>(Vulnerable.Population.Score)) <span class="sc">|&gt;</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>data <span class="sc">|&gt;</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> scaled_vulpop, <span class="at">y =</span> food_insecurity, <span class="at">color =</span> Year)) <span class="sc">+</span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Food Insecurity and Standardized Vulnerable Population Score"</span>,</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Standardized Z Score for Vulnerable Population Score"</span>,</span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Food Insecurity"</span>,</span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"Year"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The top 20 neighborhoods with the highest food insecurity in 2025 are heavily concentrated in upper Manhattan and south Bronx, regardless of their proximity to Hunt Points (Hunt Points itself is among the top 20 food insecure neighborhoods, too!). Only a few neighborhoods outside the Bronx appear in the list, including Brownsville and South Williamsburg in Brooklyn and Washington Heights, East Harlem, and Manhattanville-West Harlem in Manhattan.</p>
+</section>
+</section>
+<section id="factors-behind-food-insecurity-in-nyc" class="level3" data-number="10.3.2">
+<h3 data-number="10.3.2" class="anchored" data-anchor-id="factors-behind-food-insecurity-in-nyc"><span class="header-section-number">10.3.2</span> Factors Behind Food Insecurity in NYC</h3>
+<p>Which neighborhood characteristics are associated with higher food insecurity, and how do unemployment, vulnerable population percentage, racial composition, year, and borough help explain these differences?</p>
+<section id="how-is-unemployment-rate-associated-with-food-insecurity-across-ntas-from-2023-to-2025" class="level4" data-number="10.3.2.1">
+<h4 data-number="10.3.2.1" class="anchored" data-anchor-id="how-is-unemployment-rate-associated-with-food-insecurity-across-ntas-from-2023-to-2025"><span class="header-section-number">10.3.2.1</span> How is unemployment rate associated with food insecurity across NTAs from 2023 to 2025?</h4>
+<p>How is unemployment rate associated with food insecurity across residential NTAs from 2023 to 2025?</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>data_Residential <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> <span class="fu">filter</span>(NTAType <span class="sc">==</span> <span class="dv">0</span>) </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>data_Residential <span class="sc">|&gt;</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> unemployment_rate, <span class="at">y =</span> food_insecurity, <span class="at">color =</span> Year)) <span class="sc">+</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.5</span>, <span class="at">height =</span> <span class="dv">0</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>,<span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> </span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Unemployment Rate"</span>,<span class="at">y =</span> <span class="st">"Food Insecurity"</span>, <span class="at">color =</span> <span class="st">"Year"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="food_files/figure-html/unnamed-chunk-5-2.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Year)) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">food_high =</span> food_insecurity <span class="sc">&gt;</span> <span class="fu">median</span>(food_insecurity, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">unemployment_high =</span> unemployment_rate <span class="sc">&gt;</span> <span class="fu">median</span>(unemployment_rate, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">category =</span> <span class="fu">case_when</span>(</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>      food_high <span class="sc">&amp;</span> unemployment_high <span class="sc">~</span> <span class="st">"High food insecurity, high unemployment"</span>, </span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>       food_high <span class="sc">&amp;</span> <span class="sc">!</span>unemployment_high <span class="sc">~</span> <span class="st">"High food insecurity, low unemployment"</span>,</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>      <span class="sc">!</span>food_high <span class="sc">&amp;</span> unemployment_high <span class="sc">~</span> <span class="st">"Low food insecurity, high unemployment"</span>,</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>      <span class="sc">!</span>food_high <span class="sc">&amp;</span> <span class="sc">!</span>unemployment_high <span class="sc">~</span> <span class="st">"Low food insecurity, low unemployment"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span> Year, <span class="at">nrow =</span> <span class="dv">1</span>)<span class="sc">+</span></span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> category)) <span class="sc">+</span></span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Food Insecurity and Unemployment Classification, 2025"</span>,</span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Longtitude"</span>, </span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Latitude"</span>,</span>
-<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"Category"</span>) <span class="sc">+</span> </span>
-<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="food_files/figure-html/unnamed-chunk-5-3.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+<p><img src="food_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
+<p>The scatterplot shows a clear positive relationship between unemployment rate and food insecurity in all three years. Neighborhoods with higher unemployment rates tend to have higher food insecurity percentages. The fitted lines also show that, at the same unemployment rate, food insecurity levels shift upward over time. Compared to 2023 and 2025, observations in 2024 are more spread out especially in the lower range of unemployment rates. It suggests that neighborhoods with similar low to middle unemployment rates had more varied food insecurity levels than in the other years.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>data_Residential <span class="sc">|&gt;</span> <span class="fu">filter</span>(Year <span class="sc">==</span> <span class="dv">2024</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> unemployment_rate, <span class="at">y =</span> food_insecurity, <span class="at">color =</span> BoroName)) <span class="sc">+</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.5</span>, <span class="at">height =</span> <span class="dv">0</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Food Insecurity Among Neighborhoods with Lower Unemployment Rate, 2024"</span>, <span class="at">x =</span> <span class="st">"Unemployment Rate"</span>,<span class="at">y =</span> <span class="st">"Food Insecurity"</span>, <span class="at">color =</span> <span class="st">"Borough"</span>) <span class="sc">+</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(<span class="at">data =</span> data_Residential <span class="sc">|&gt;</span> </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(Year <span class="sc">==</span> <span class="st">"2024"</span> <span class="sc">&amp;</span> unemployment_rate <span class="sc">&lt;=</span> <span class="fu">median</span>(unemployment_rate)) <span class="sc">|&gt;</span> </span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">arrange</span>(<span class="fu">desc</span>(food_insecurity)) <span class="sc">|&gt;</span> </span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">10</span>), <span class="fu">aes</span>(<span class="at">label =</span> NTAName), <span class="at">size =</span> <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="food_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>By focusing on 2024 and labeling the 10 neighborhoods with the highest food insecurity percentages among those with unemployment rates below the median, we found out that 4 out of 10 are neighborhoods in Queens, 2 in Bronx, 2 in Brooklyn, and 1 in Manhattan and Staten Island each.</p>
+</section>
+<section id="how-is-the-vulnerable-population-score-associated-with-food-insecurity-across-ntas-from-2023-to-2025" class="level4" data-number="10.3.2.2">
+<h4 data-number="10.3.2.2" class="anchored" data-anchor-id="how-is-the-vulnerable-population-score-associated-with-food-insecurity-across-ntas-from-2023-to-2025"><span class="header-section-number">10.3.2.2</span> How is the vulnerable population score associated with food insecurity across NTAs from 2023 to 2025?</h4>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>data_Residential <span class="sc">|&gt;</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> scaled_vulpop, <span class="at">y =</span> food_insecurity, <span class="at">color =</span> Year)) <span class="sc">+</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Food Insecurity and Standardized Vulnerable Population Score"</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Standardized Z Score for Vulnerable Population Score"</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Food Insecurity"</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"Year"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="food_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Vulnerable population score was calculated by Mayor’s Office of Food Policy to reflect the presence of citizens that are 65+, under 18, foreign born non-citizens, or veterans. The scatterplot shows that neighborhoods with higher vulnerable population scores tend to have higher food insecurity percentages from 2023 to 2025. However, the relationship is weaker and more scattered compared to that between food insecurity and unemployment. Many neighborhoods with similar vulnerability scores have very different food insecurity levels. The fitted lines also shift upward from 2023 to 2025, which suggest that food insecurity increased over time among neighborhoods with similar levels of vulnerability.</p>
+</section>
+<section id="how-is-racial-composition-associated-with-food-insecurity-across-ntas" class="level4" data-number="10.3.2.3">
+<h4 data-number="10.3.2.3" class="anchored" data-anchor-id="how-is-racial-composition-associated-with-food-insecurity-across-ntas"><span class="header-section-number">10.3.2.3</span> How is racial composition associated with food insecurity across NTAs?</h4>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>data_Residential <span class="sc">|&gt;</span> </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">`</span><span class="at">Total Hispanic or Latino (%)</span><span class="st">`</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>      <span class="st">`</span><span class="at">Total Black-alone (%)</span><span class="st">`</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>      <span class="st">`</span><span class="at">Total Asian-alone (%)</span><span class="st">`</span>,</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">`</span><span class="at">Total White-alone (%)</span><span class="st">`</span>, </span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">`</span><span class="at">Total Other-alone (%)</span><span class="st">`</span>),</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"race"</span>,</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"percent"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> percent, <span class="at">y =</span> food_insecurity, <span class="at">color =</span> Year)) <span class="sc">+</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">0.5</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> race) <span class="sc">+</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Population Percentage"</span>,</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Food Insecurity Percentage"</span>,</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"Year"</span>,</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Racial Composition and Food Insecurity"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="food_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Food insecurity percentages have the strongest relationship with the Hispanic or Latino population and White population, as indicated by the steeper slopes of the fitted lines. Across all three years, neighborhoods with higher Hispanic or Latino proportion tends to have higher food insecurity percentages, and those with higher White population shows the opposite. Asian population presents a negative but weaker relationship overall. Black population percentage has the weakest and least consistent relationship with food insecurity percentages, meaning that it alone does not strongly explain the variation in food insecurity.</p>
+</section>
+<section id="multivariate-linear-regression-model-on-food-insecuritys-association-with-unemployment-rate-racial-composition-year-and-borough." class="level4" data-number="10.3.2.4">
+<h4 data-number="10.3.2.4" class="anchored" data-anchor-id="multivariate-linear-regression-model-on-food-insecuritys-association-with-unemployment-rate-racial-composition-year-and-borough."><span class="header-section-number">10.3.2.4</span> Multivariate linear regression model on food insecurity’s association with unemployment rate, racial composition, year, and borough.</h4>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(food_insecurity <span class="sc">~</span> unemployment_rate <span class="sc">+</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Total Hispanic or Latino (%)</span><span class="st">`</span> <span class="sc">+</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Total Black-alone (%)</span><span class="st">`</span> <span class="sc">+</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Total Asian-alone (%)</span><span class="st">`</span> <span class="sc">+</span> <span class="st">`</span><span class="at">Total Other-alone (%)</span><span class="st">`</span> <span class="sc">+</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    Year, <span class="at">data =</span> data_Residential)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = food_insecurity ~ unemployment_rate + `Total Hispanic or Latino (%)` + 
+    `Total Black-alone (%)` + `Total Asian-alone (%)` + `Total Other-alone (%)` + 
+    Year, data = data_Residential)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-10.7842  -2.3886  -0.1956   2.1359  20.7242 
+
+Coefficients:
+                                Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)                     4.470707   0.682802   6.548 1.28e-10 ***
+unemployment_rate               1.128134   0.076712  14.706  &lt; 2e-16 ***
+`Total Hispanic or Latino (%)`  0.064725   0.011465   5.646 2.57e-08 ***
+`Total Black-alone (%)`        -0.017216   0.009733  -1.769 0.077444 .  
+`Total Asian-alone (%)`         0.006465   0.012743   0.507 0.612103    
+`Total Other-alone (%)`        -0.189008   0.055092  -3.431 0.000645 ***
+Year2024                        2.767107   0.410974   6.733 3.99e-11 ***
+Year2025                        4.178242   0.411955  10.142  &lt; 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 4.079 on 583 degrees of freedom
+Multiple R-squared:  0.5653,    Adjusted R-squared:  0.5601 
+F-statistic: 108.3 on 7 and 583 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(food_insecurity <span class="sc">~</span> unemployment_rate <span class="sc">+</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Total Hispanic or Latino (%)</span><span class="st">`</span> <span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Total Black-alone (%)</span><span class="st">`</span> <span class="sc">+</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Total Asian-alone (%)</span><span class="st">`</span> <span class="sc">+</span> <span class="st">`</span><span class="at">Total Other-alone (%)</span><span class="st">`</span> <span class="sc">+</span> </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    BoroName <span class="sc">+</span> Year, <span class="at">data =</span> data_Residential)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = food_insecurity ~ unemployment_rate + `Total Hispanic or Latino (%)` + 
+    `Total Black-alone (%)` + `Total Asian-alone (%)` + `Total Other-alone (%)` + 
+    BoroName + Year, data = data_Residential)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-11.8065  -2.2312  -0.3306   1.5756  20.1700 
+
+Coefficients:
+                                Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)                     5.445382   0.963446   5.652 2.49e-08 ***
+unemployment_rate               0.966522   0.075142  12.863  &lt; 2e-16 ***
+`Total Hispanic or Latino (%)`  0.079832   0.012025   6.639 7.28e-11 ***
+`Total Black-alone (%)`        -0.011110   0.009466  -1.174 0.240978    
+`Total Asian-alone (%)`         0.045942   0.013635   3.369 0.000803 ***
+`Total Other-alone (%)`        -0.117804   0.054291  -2.170 0.030424 *  
+BoroNameBrooklyn                0.369736   0.616185   0.600 0.548714    
+BoroNameManhattan              -0.446767   0.661523  -0.675 0.499716    
+BoroNameQueens                 -3.410006   0.628273  -5.428 8.41e-08 ***
+BoroNameStaten Island          -3.343539   0.787578  -4.245 2.54e-05 ***
+Year2024                        2.767107   0.382388   7.236 1.47e-12 ***
+Year2025                        4.118356   0.383400  10.742  &lt; 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 3.795 on 579 degrees of freedom
+Multiple R-squared:  0.6263,    Adjusted R-squared:  0.6192 
+F-statistic:  88.2 on 11 and 579 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>data_Residential <span class="sc">|&gt;</span> <span class="fu">group_by</span>(BoroName) <span class="sc">|&gt;</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">Hispanic =</span> <span class="fu">mean</span>(<span class="st">`</span><span class="at">Total Hispanic or Latino (%)</span><span class="st">`</span>),</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">Black =</span> <span class="fu">mean</span>(<span class="st">`</span><span class="at">Total Black-alone (%)</span><span class="st">`</span>),</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Asian =</span> <span class="fu">mean</span>(<span class="st">`</span><span class="at">Total Asian-alone (%)</span><span class="st">`</span>),</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">White =</span> <span class="fu">mean</span>(<span class="st">`</span><span class="at">Total White-alone (%)</span><span class="st">`</span>), </span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Other =</span> <span class="fu">mean</span>(<span class="st">`</span><span class="at">Total Other-alone (%)</span><span class="st">`</span>)) <span class="sc">|&gt;</span> <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(Hispanic, Black, Asian, White, Other),</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"race"</span>,</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"percent"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> BoroName, <span class="at">y =</span> percent, <span class="at">fill =</span> race)) <span class="sc">+</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">"stack"</span>) <span class="sc">+</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Borough"</span>,</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Average Population Percentage (%)"</span>,</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"Race or Ethnicity"</span>,</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Average Racial Composition by Borough"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="food_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Model 1 studies the association between food insecurity, unemployment rate, racial composition, and year, without controlling for borough. The result shows that unemployment rate is strongly and positively associated with food insecurity. A one percentage point increase in unemployment rate is associated with about a 1.13 percentage point increase in food insecurity, holding racial composition and year constant. Meanwhile, compared with 2023 and holding other variables constant, food insecurity is about 2.77 percentage points higher in 2024 and about 4.18 percentage points higher in 2025. For racial composition, Hispanic or Latino population percentage is positive and statistically significant. Holding other variables constant, a one percentage point increase in Hispanic or Latino population percentage is associated with about a 0.065 percentage point increase in food insecurity. Black and Asian population percentages are not statistically significant in ways that indicate their association with food insecurity.</p>
+<p>However, in Model 2, after taking boroughs into consideration, all predictors remain a similar relationship with food insecurity percentages except the Asian population percentage. It becomes statistically significant and is positively associated with food insecurity, with a coefficient of 0.046. The demographic chart helps explain this change. The proportions of Asian population vary across boroughs. Boroughs that have lower food insecurity than the Bronx, like Queens, generally have higher percentages of Asian population. This cancels out the fact that neighborhoods with higher percentage of Asian population have higher food insecurity than other neighborhoods in the same borough. As a result, the citywide association between Asian population percentage and food insecurity appears weak in Model 1. Except this change, the borough coefficients also show that Queens and Staten Island have statistically significantly lower food insecurity than Bronx.</p>
+</section>
+</section>
+<section id="temporal-trends-of-food-insecurity-in-nyc-2023-2025" class="level3" data-number="10.3.3">
+<h3 data-number="10.3.3" class="anchored" data-anchor-id="temporal-trends-of-food-insecurity-in-nyc-2023-2025"><span class="header-section-number">10.3.3</span> Temporal Trends of Food Insecurity in NYC, 2023-2025</h3>
+<section id="how-have-spatial-patterns-of-food-insecurity-evolved-from-2023-to-2025" class="level4" data-number="10.3.3.1">
+<h4 data-number="10.3.3.1" class="anchored" data-anchor-id="how-have-spatial-patterns-of-food-insecurity-evolved-from-2023-to-2025"><span class="header-section-number">10.3.3.1</span> How have spatial patterns of food insecurity evolved from 2023 to 2025?</h4>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">|&gt;</span> </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> food_insecurity)) <span class="sc">+</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_distiller</span>(<span class="at">palette =</span> <span class="st">"Greens"</span>, <span class="at">direction =</span> <span class="dv">1</span>,<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">40</span>), </span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">40</span>, <span class="at">by =</span> <span class="dv">10</span>)) <span class="sc">+</span> </span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Year, <span class="at">nrow =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Food Insecurity Percentage by Neighborhood, 2023-2025"</span>, </span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Longitude"</span>,</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Latitude"</span>, </span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Food Insecurity Percentage"</span>) <span class="sc">+</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="food_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This map shows the spatially uneven distribution of food insecurity across NYC NTAs in each year from 2023 to 2025. Darker green areas indicate higher food insecurity percentages. Across all three years, higher food insecurity is especially visible in parts of the Bronx, northern Manhattan, and some neighborhoods in Brooklyn and Queens. Food insecurity percentages appear to increase modestly from 2023 to 2025. The 2025 map appears darker than 2023 with more medium-green neighborhoods, while having less extremely dark green outliers compared to the 2024 map.</p>
+</section>
+<section id="did-all-neighborhoods-change-in-the-same-way" class="level4" data-number="10.3.3.2">
+<h4 data-number="10.3.3.2" class="anchored" data-anchor-id="did-all-neighborhoods-change-in-the-same-way"><span class="header-section-number">10.3.3.2</span> Did all neighborhoods change in the same way?</h4>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>data_diff <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="st">"Year"</span>, <span class="st">"food_insecurity"</span>) <span class="sc">|&gt;</span> <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Year, <span class="at">values_from =</span> food_insecurity) <span class="sc">|&gt;</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">2023-2024</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">2024</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">2023</span><span class="st">`</span>, <span class="st">`</span><span class="at">2024-2025</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">2025</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">2024</span><span class="st">`</span>) <span class="sc">|&gt;</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(<span class="st">`</span><span class="at">2023-2024</span><span class="st">`</span>, <span class="st">`</span><span class="at">2024-2025</span><span class="st">`</span>),</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"Year_diff"</span>,</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"food_diff"</span>)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>data_diff <span class="sc">|&gt;</span> <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> <span class="st">`</span><span class="at">food_diff</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient2</span>(<span class="at">low =</span> <span class="st">"#2166AC"</span>, <span class="at">mid =</span> <span class="st">"white"</span>,</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>                        <span class="at">high =</span> <span class="st">"#B2182B"</span>, <span class="at">midpoint =</span> <span class="dv">0</span>, <span class="at">limits =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">20</span>, <span class="dv">20</span>)) <span class="sc">+</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Year_diff, <span class="at">nrow =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Change in Food Insecurity Percentage Points by Neighborhood"</span>, </span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Longitude"</span>,</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Latitude"</span>, </span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Change in % points"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="food_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This map shows how food insecurity changed between consecutive years, using percentage-point differences. Red means food insecurity percentage increased. Blue means it decreased. From 2023 to 2024, most NTAs are shaded light to moderate red, which means that food insecurity percentages increased in the majority of the neighborhoods. Some of the strongest increases appear in Staten Island, Bronx, and Queens. 2024 to 2025 shows a more mixed pattern. There are more visible decreases than in the previous period. Some neighborhoods show great declines, especially in Staten Island, northern and midtown Manhattan, and western and eastern Queens. This suggests that while food insecurity generally worsened over time, changes across neighborhoods appear quite uneven, and some areas saw improvement between 2024 and 2025.</p>
+</section>
 </section>
 </section>
 <section id="conclusion" class="level2" data-number="10.4">
 <h2 data-number="10.4" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">10.4</span> Conclusion</h2>
-<p>To be determined</p>
+<p>This project shows that food insecurity in New York City is distributed unevenly across neighborhoods and boroughs and closely tied to broader socioeconomic vulnerability. The Bronx stands out as the borough with the highest food insecurity in 2025, while Queens and Staten Island have the lowest median levels. The most food-insecure neighborhoods are mainly concentrated in the South Bronx and upper Manhattan. Unemployment has the clearest positive association with food insecurity, while the vulnerable population score is also positively related but with a weaker association. Racial composition helps explain variation in food insecurity across NTAs as well. Higher Hispanic or Latino population percentages are associated with higher food insecurity, while higher White population percentages are associated with lower food insecurity. The regression models suggest that these relationships remain meaningful even after accounting for year and borough. This shows that food insecurity is spatially and structurally shaped by neighborhood, borough, employment, and demographic patterns. In the meanwhile, this project has several limitations. The analysis relies mainly on the variables already included in the Food Supply Gap dataset, without consulting research that may inform me more comprehensively of the topic and help me identify other important factors related to food insecurity. The multivariate linear regression model has an R-squared value of 0.6192, which means that a substantial part of variation in food insecurity stays unexplained. In addition, the vulnerable population score is pre-calculated in the original dataset, which makes it difficult to examine how specific vulnerable groups, such as older adults, children, foreign-born non-citizens, or veterans, are separately connected to food insecurity. I also failed to figure out the reason behind why the 2025 scores have a different scale than those in previous years. Future exploration can discuss additional variables such as income, rent, food pantry locations, transportation access, and local cost of living. It could also incorporate food distribution infrastructure and networks into analysis. This can help explain why food supply can’t keep up with the demand in a neighborhood, and why proximity to food distribution centers, as shown in this studies, is yet associated with greater food insecurity. The main takeaway from this exploration is that mapping and modeling together are especially useful. Maps reveal the distribution of food insecurity across neighborhoods, while models help identify the characteristics of these neighborhoods that may be associated with this insecurity.</p>
 
 
 </section>
