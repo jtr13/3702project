@@ -251,8 +251,14 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./MTASubwayData.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">NYC Subway Ridership and Delays</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./instructions.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Contributor instructions</span></span></a>
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Contributor instructions</span></span></a>
   </div>
 </li>
     </ul>
@@ -273,9 +279,10 @@ window.Quarto = {
   </ul></li>
   <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results"><span class="header-section-number">4.3</span> Results</a>
   <ul class="collapse">
-  <li><a href="#topic-1-location-of-arrests" id="toc-topic-1-location-of-arrests" class="nav-link" data-scroll-target="#topic-1-location-of-arrests"><span class="header-section-number">4.3.1</span> Topic 1: Location of Arrests</a></li>
-  <li><a href="#topic-2-arrests-and-indicators-of-crime-across-precincts" id="toc-topic-2-arrests-and-indicators-of-crime-across-precincts" class="nav-link" data-scroll-target="#topic-2-arrests-and-indicators-of-crime-across-precincts"><span class="header-section-number">4.3.2</span> Topic 2: Arrests and Indicators of Crime Across Precincts</a></li>
-  <li><a href="#topic-3-arrests-by-location-and-race" id="toc-topic-3-arrests-by-location-and-race" class="nav-link" data-scroll-target="#topic-3-arrests-by-location-and-race"><span class="header-section-number">4.3.3</span> Topic 3: Arrests by Location and Race</a></li>
+  <li><a href="#topic-1-spatial-patterns-in-arrests" id="toc-topic-1-spatial-patterns-in-arrests" class="nav-link" data-scroll-target="#topic-1-spatial-patterns-in-arrests"><span class="header-section-number">4.3.1</span> Topic 1: Spatial Patterns in Arrests</a></li>
+  <li><a href="#topic-2-relationship-between-arrests-and-indicators-of-crime-across-precincts" id="toc-topic-2-relationship-between-arrests-and-indicators-of-crime-across-precincts" class="nav-link" data-scroll-target="#topic-2-relationship-between-arrests-and-indicators-of-crime-across-precincts"><span class="header-section-number">4.3.2</span> Topic 2: Relationship Between Arrests and Indicators of Crime Across Precincts</a></li>
+  <li><a href="#topic-3-racial-composition-of-people-arrested-across-nyc" id="toc-topic-3-racial-composition-of-people-arrested-across-nyc" class="nav-link" data-scroll-target="#topic-3-racial-composition-of-people-arrested-across-nyc"><span class="header-section-number">4.3.3</span> Topic 3: Racial Composition of People Arrested Across NYC</a></li>
+  <li><a href="#short-summary-of-findings" id="toc-short-summary-of-findings" class="nav-link" data-scroll-target="#short-summary-of-findings"><span class="header-section-number">4.3.4</span> Short Summary of Findings</a></li>
   </ul></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">4.4</span> Conclusion</a></li>
   </ul>
@@ -306,17 +313,25 @@ window.Quarto = {
 <p>By: Jade Amaya</p>
 <section id="introduction" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">4.1</span> Introduction</h2>
-<p>Hi everyone, welcome to my project! This project looks at NYPD Arrest Data (YTD) and examines the relationships between arrests, location, demographic characteristics, and other crime indicators. I use precinct-level aggregated data to analyze how arrest patterns vary across NYC and how they relate to complaints, shootings, and race with respect to arrests. I wanted to look at this data set (and related ones) because I have a broader interest in how policing and crime intersect with historical patterns in law enforcement, specifically in the U.S. Some historical context motivating my project is related to slavery patrol systems during the antebellum period that were replaced by modern police systems during the Jim Crow era to reinforce segregation, and recently (as in a few years ago) stop-and-frisk in the late 20th to early 21st century. Amid this context, I use the following datasets to look at statistical relationships that may tell a story as to how arrests are distributed across NYC during this time.</p>
+<p>Hi everyone, welcome to my project! This project looks at NYPD Arrest Data (YTD) and examines the relationships between arrests, location, demographic characteristics, and other crime indicators. I use precinct-level aggregated data to analyze how arrest patterns vary across New York City (NYC) and how they relate to complaints, shootings, and race with respect to arrests. I wanted to look at this data set (and related ones) because I have a broader interest in how policing and crime intersect with historical patterns in law enforcement, specifically in the U.S. Some historical context motivating my project is related to slavery patrol systems during the antebellum period that were replaced by modern police systems during the Jim Crow era to reinforce segregation, and recently (as in a few years ago) stop-and-frisk in the late 20th to early 21st century. Amid this context, I use the following datasets to look at statistical relationships that may tell a story as to how arrests are distributed across NYC during this time.</p>
+<p>My project is divided into the following three topics, each addressing separate questions:</p>
+<ol type="1">
+<li><p>Spatial patterns in arrests</p></li>
+<li><p>The relationship between arrests and crime indicators</p></li>
+<li><p>Racial composition of people arrested across NYC</p></li>
+</ol>
 </section>
 <section id="data" class="level2" data-number="4.2">
 <h2 data-number="4.2" class="anchored" data-anchor-id="data"><span class="header-section-number">4.2</span> Data</h2>
 <section id="description" class="level3" data-number="4.2.1">
 <h3 data-number="4.2.1" class="anchored" data-anchor-id="description"><span class="header-section-number">4.2.1</span> Description</h3>
-<p>The data was collected by the NYPD and published by NYC’s Open Data team. The data was imported, using an csv file from the NYPD Arrest (Year to Date) Data set. The dataframe contains 19 columns and 63.5k rows. The data is updated every year some time during mid to late April. Another dataset that I use in this project is also NYPD Complaint data, using an API. To control for time, both datasets are filtered to only include data from this year (1/1/26 - 3/31/26). Some limitations of this dataset is that there is no data provided that informs us whether or not these arrested people were let go, whether they were scheduled a trial, or whether some of these arrests pertain to the same individual; that some demographic information pertaining to individuals are missing; and that even though these people were arrested, cannot say for certain all actually committed the crime.</p>
-<p>Here are the links to the datasets:</p>
+<p>The arrest data was collected by the NYPD, reviewed and extracted by the Office of Management and Planning, then published by NYC’s Open Data team. It was imported, using a csv file, as a dataframe containing 19 columns and 69.3k rows. The data columns spanned information ranging from information about the crime and location to demographics of the person arrested. The data is updated quarterly throughout the year, and most recently during late April. Other datasets that I use in this project are NYPD Complaint data and NYC Shootings, both of which are collected by the NYPD, updated quarterly, and were called into this project using an API. To control for time and location, datasets were filtered to include only observations from 1/1/26 to 3/31/26 and were grouped and merged by precinct. Some limitations of the dataset are that is does not indicate whether arrested individuals were released, formally charged and indicted, or scheduled for a trial, nor does it clarify whether observations identified repeated offenders. Moreover, some demographic variables contain missing values, and an arrest record by itself does not confirm that an individual committed the alleged offense.</p>
+<p>Below are the links to all the datasets used in this project:</p>
 <p><a href="https://data.cityofnewyork.us/Public-Safety/NYPD-Arrest-Data-Year-to-Date-/uip8-fykc/about_data">NYPD Arrests</a></p>
 <p><a href="https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Current-Year-To-Date-/5uac-w243/about_data">NYPD Complaints</a></p>
 <p><a href="https://data.cityofnewyork.us/Public-Safety/Shootings-2006-Present-/5ucz-vwe8/about_data">NYC Shootings</a></p>
+<p><a href="https://www.nyc.gov/content/planning/pages/resources/datasets/police-precincts">NYPP Shape Data (25c)</a></p>
+<p><a href="https://www.nyc.gov/content/planning/pages/resources/datasets/borough-boundaries">NYBB Shape Data (26a)</a></p>
 </section>
 <section id="missing-value-analysis" class="level3" data-number="4.2.2">
 <h3 data-number="4.2.2" class="anchored" data-anchor-id="missing-value-analysis"><span class="header-section-number">4.2.2</span> Missing Value Analysis</h3>
@@ -336,7 +351,9 @@ window.Quarto = {
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">ky_cd =</span> KY_CD, <span class="at">jurisdiction_code =</span> JURISDICTION_CODE, </span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">ofns_desc =</span> OFNS_DESC, <span class="at">arrest_boro =</span> ARREST_BORO, </span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">Precinct =</span> ARREST_PRECINCT, <span class="at">perp_race =</span> PERP_RACE,</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">pd_cd =</span> PD_CD, <span class="at">longitude =</span> Longitude, <span class="at">latitude =</span> Latitude)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">pd_cd =</span> PD_CD, <span class="at">longitude =</span> Longitude, <span class="at">latitude =</span> Latitude) <span class="sc">|&gt;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">arrest_boro =</span> <span class="fu">recode</span>(arrest_boro, <span class="st">`</span><span class="at">M</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"Manhattan"</span>, <span class="st">`</span><span class="at">B</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"Bronx"</span>, <span class="st">`</span><span class="at">K</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"Brooklyn"</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>                           <span class="st">'Q'</span> <span class="ot">=</span> <span class="st">"Queens"</span>, <span class="st">'S'</span> <span class="ot">=</span> <span class="st">"Staten Island"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(redav)</span>
@@ -352,13 +369,13 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>Most of the rows in the dataset contained no missing values. Above the graph shows that the second most common pattern had sex and age group missing values. The third pattern included all other columns without missing values, but the level of defense.</p>
+<p>The missing value plot shows that most of the rows in the dataset contained no missing values, while the most common missing data patterns involve the perp_sex and age_group variables either by themselves or alongside offense-related variables such as ofns_desc and pd_desc. The remaining 10 columns did not contain missing data and thus were left unlisted.</p>
 </section>
 </section>
 <section id="results" class="level2" data-number="4.3">
 <h2 data-number="4.3" class="anchored" data-anchor-id="results"><span class="header-section-number">4.3</span> Results</h2>
-<section id="topic-1-location-of-arrests" class="level3" data-number="4.3.1">
-<h3 data-number="4.3.1" class="anchored" data-anchor-id="topic-1-location-of-arrests"><span class="header-section-number">4.3.1</span> Topic 1: Location of Arrests</h3>
+<section id="topic-1-spatial-patterns-in-arrests" class="level3" data-number="4.3.1">
+<h3 data-number="4.3.1" class="anchored" data-anchor-id="topic-1-spatial-patterns-in-arrests"><span class="header-section-number">4.3.1</span> Topic 1: Spatial Patterns in Arrests</h3>
 <section id="where-are-arrests-concentrated" class="level4" data-number="4.3.1.1">
 <h4 data-number="4.3.1.1" class="anchored" data-anchor-id="where-are-arrests-concentrated"><span class="header-section-number">4.3.1.1</span> Where are arrests concentrated?</h4>
 <div class="cell" data-layout-align="center">
@@ -376,8 +393,8 @@ Bounding box:  xmin: 913175.1 ymin: 120128.4 xmax: 1067383 ymax: 272844.3
 Projected CRS: NAD83 / New York Long Island (ftUS)</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>nybb <span class="ot">&lt;-</span> nybb <span class="sc">|&gt;</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">BoroCode =</span> <span class="fu">recode</span>(BoroCode, <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"M"</span>, <span class="st">`</span><span class="at">2</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"B"</span>, <span class="st">`</span><span class="at">3</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"K"</span>,</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                           <span class="st">'4'</span> <span class="ot">=</span> <span class="st">"Q"</span>, <span class="st">'5'</span> <span class="ot">=</span> <span class="st">"S"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">BoroCode =</span> <span class="fu">recode</span>(BoroCode, <span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"Manhattan"</span>, <span class="st">`</span><span class="at">2</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"Bronx"</span>, <span class="st">`</span><span class="at">3</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"Brooklyn"</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                           <span class="st">'4'</span> <span class="ot">=</span> <span class="st">"Queens"</span>, <span class="st">'5'</span> <span class="ot">=</span> <span class="st">"Staten Island"</span>)) <span class="sc">|&gt;</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">arrest_boro =</span> BoroCode)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell" data-layout-align="center">
@@ -415,7 +432,7 @@ Projected CRS: NAD83 / New York Long Island (ftUS)</code></pre>
 </div>
 </div>
 </div>
-<p>The graphs compare arrest patterns across NYC’s boroughs, with each borough labeled by its abbreviation/first initial letter (except for Brooklyn, represented by “K”). The left spatial graph shows the spatial distribution of individual arrest locations using their respective x and y coordinates, while the right bar graph shows the total number of arrests in each borough. Side by side, the plots show that Brooklyn (n = 21111) has the highest numbers of arrests compared to the other boroughs, while Staten Island (n = 2551) has the lowest.</p>
+<p>The graphs compare arrest patterns across NYC’s boroughs. The left spatial graph shows the spatial distribution of individual arrest locations using their respective x and y coordinates, while the right bar graph shows the total number of arrests in each borough. Side by side, the plots show that Brooklyn (n = 21111) has the highest numbers of arrests compared to the other boroughs, while Staten Island (n = 2551) has the lowest.</p>
 </section>
 <section id="concentration-by-precinct" class="level5" data-number="4.3.1.1.2">
 <h5 data-number="4.3.1.1.2" class="anchored" data-anchor-id="concentration-by-precinct"><span class="header-section-number">4.3.1.1.2</span> Concentration by Precinct</h5>
@@ -427,7 +444,7 @@ Projected CRS: NAD83 / New York Long Island (ftUS)</code></pre>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(precincts_counts, <span class="fu">aes</span>(<span class="at">x =</span> count, <span class="at">y =</span> <span class="fu">fct_reorder</span>(<span class="fu">as.factor</span>(Precinct), count))) <span class="sc">+</span></span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>, <span class="at">color =</span> <span class="st">"cornflowerblue"</span>) <span class="sc">+</span></span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"Precinct"</span>, <span class="at">title =</span> <span class="st">"Number of Arrests by Precinct"</span>, <span class="at">subtitle =</span> <span class="st">"From January 1, 2026 to March 31, 2026"</span>) <span class="sc">+</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="dv">18</span>) <span class="sc">+</span> </span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="dv">16</span>) <span class="sc">+</span> </span>
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>), <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -441,8 +458,8 @@ Projected CRS: NAD83 / New York Long Island (ftUS)</code></pre>
 </section>
 </section>
 </section>
-<section id="topic-2-arrests-and-indicators-of-crime-across-precincts" class="level3" data-number="4.3.2">
-<h3 data-number="4.3.2" class="anchored" data-anchor-id="topic-2-arrests-and-indicators-of-crime-across-precincts"><span class="header-section-number">4.3.2</span> Topic 2: Arrests and Indicators of Crime Across Precincts</h3>
+<section id="topic-2-relationship-between-arrests-and-indicators-of-crime-across-precincts" class="level3" data-number="4.3.2">
+<h3 data-number="4.3.2" class="anchored" data-anchor-id="topic-2-relationship-between-arrests-and-indicators-of-crime-across-precincts"><span class="header-section-number">4.3.2</span> Topic 2: Relationship Between Arrests and Indicators of Crime Across Precincts</h3>
 <section id="what-is-the-association-between-the-number-of-crime-complaints-and-arrests-across-precincts" class="level4" data-number="4.3.2.1">
 <h4 data-number="4.3.2.1" class="anchored" data-anchor-id="what-is-the-association-between-the-number-of-crime-complaints-and-arrests-across-precincts"><span class="header-section-number">4.3.2.1</span> What is the association between the number of crime complaints and arrests across precincts?</h4>
 <div class="cell" data-layout-align="center">
@@ -513,8 +530,8 @@ F-statistic: 779.2 on 1 and 76 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>shootings <span class="ot">&lt;-</span> shootings <span class="sc">|&gt;</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">boro =</span> <span class="fu">recode</span>(boro, <span class="st">`</span><span class="at">MANHATTAN</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"M"</span>, <span class="st">`</span><span class="at">BRONX</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"B"</span>, <span class="st">`</span><span class="at">BROOKLYN</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"K"</span>,</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                           <span class="st">'QUEENS'</span> <span class="ot">=</span> <span class="st">"Q"</span>, <span class="st">'STATEN ISLAND'</span> <span class="ot">=</span> <span class="st">"S"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">boro =</span> <span class="fu">recode</span>(boro, <span class="st">`</span><span class="at">MANHATTAN</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"Manhattan"</span>, <span class="st">`</span><span class="at">BRONX</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"Bronx"</span>, <span class="st">`</span><span class="at">BROOKLYN</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"Brooklyn"</span>,</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                           <span class="st">'QUEENS'</span> <span class="ot">=</span> <span class="st">"Queens"</span>, <span class="st">'STATEN ISLAND'</span> <span class="ot">=</span> <span class="st">"Staten Island"</span>)) <span class="sc">|&gt;</span></span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">boro =</span> boro, <span class="at">Precinct =</span> precinct) <span class="sc">|&gt;</span></span>
 <span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(occur_date <span class="sc">&gt;=</span> <span class="fu">as.Date</span>(<span class="st">"2026-01-01"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -554,8 +571,8 @@ F-statistic: 779.2 on 1 and 76 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>In this scatterplot matrix, each observation represents a NYC precinct. The variables, which are NYPD arrests, NYPD complaints, and NYC shootings, are summed up counts within each precinct. The pairwise plot shows relationships and their correlation coefficients between each combination of the variables, all of which are positive and statistically significant (indicated by the asterisks). The graph also suggests that precincts with higher levels of NYPD complaints are correlated with higher NYPD arrest counts, while shootings have a weaker correlation with higher arrest accounts in comparison.</p>
 </section>
 </section>
-<section id="topic-3-arrests-by-location-and-race" class="level3" data-number="4.3.3">
-<h3 data-number="4.3.3" class="anchored" data-anchor-id="topic-3-arrests-by-location-and-race"><span class="header-section-number">4.3.3</span> Topic 3: Arrests by Location and Race</h3>
+<section id="topic-3-racial-composition-of-people-arrested-across-nyc" class="level3" data-number="4.3.3">
+<h3 data-number="4.3.3" class="anchored" data-anchor-id="topic-3-racial-composition-of-people-arrested-across-nyc"><span class="header-section-number">4.3.3</span> Topic 3: Racial Composition of People Arrested Across NYC</h3>
 <section id="does-the-racial-distribution-of-arrests-differ-by-nyc-borough" class="level4" data-number="4.3.3.1">
 <h4 data-number="4.3.3.1" class="anchored" data-anchor-id="does-the-racial-distribution-of-arrests-differ-by-nyc-borough"><span class="header-section-number">4.3.3.1</span> Does the racial distribution of arrests differ by NYC borough?</h4>
 <div class="cell" data-layout-align="center">
@@ -574,7 +591,7 @@ F-statistic: 779.2 on 1 and 76 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 </div>
-<p>The bar graph shows the proportional distribution of arrests by race across the five boroughs, with each borough on the x-axis labeled by its first letter initial, with “K” representing Brooklyn. Across all boroughs, individuals identified as Black make up the largest proportion of arrests compared to other racial groups, while Asians/Pacific Islanders represent the smallest proportion</p>
+<p>The bar graph shows the proportional distribution of arrests by race across the five boroughs, with each borough on the x-axis. Across all boroughs, individuals identified as Black make up the largest proportion of arrests compared to other racial groups, while Asians/Pacific Islanders represent the smallest proportion</p>
 </section>
 <section id="what-is-the-racial-distribution-of-people-who-are-arrested-in-the-precinct-with-the-highest-number-of-arrests" class="level4" data-number="4.3.3.2">
 <h4 data-number="4.3.3.2" class="anchored" data-anchor-id="what-is-the-racial-distribution-of-people-who-are-arrested-in-the-precinct-with-the-highest-number-of-arrests"><span class="header-section-number">4.3.3.2</span> What is the racial distribution of people who are arrested in the precinct with the highest number of arrests?</h4>
@@ -649,11 +666,14 @@ F-statistic: 779.2 on 1 and 76 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>As represented in the bar graph, there were a total of 19 arrests in Precinct 22. Out of those arrests, 58% were people identified as hispanics, 32% were people identified as black, and 11% were people identified as white.</p>
 </section>
 </section>
+<section id="short-summary-of-findings" class="level3" data-number="4.3.4">
+<h3 data-number="4.3.4" class="anchored" data-anchor-id="short-summary-of-findings"><span class="header-section-number">4.3.4</span> Short Summary of Findings</h3>
+<p>Overall, there are different geographic and demographic variations in NYPD arrest patterns across NYC. Brooklyn had the highest frequency of arrests and also contained the precinct with the highest number of arrests. On the other hand, Staten Island had the lowest total number of arrests, while Manhattan’s Precinct 22 recorded the lowest arrest count year to date. When comparing arrests with crime indicators, both shootings and NYPD complaints showed strong, positive correlations with arrest counts across precincts. However, the association between complaints and arrests was noticeably stronger and statistically significant, suggesting a stronger relationship between NYPD complaints and arrest activity at the precinct level. Additionally, individuals identified as Black represented the largest proportion of arrested across all five boroughs, though racial composition varied at the precinct level.</p>
+</section>
 </section>
 <section id="conclusion" class="level2" data-number="4.4">
 <h2 data-number="4.4" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">4.4</span> Conclusion</h2>
-<p>This project analyzed NYPD arrest data (YTD) to explore relationships between arrests and crime indicators, including shootings and NYPD complaints, as well as spatial patterns and racial composition across NYC. Overall, Brooklyn had the highest frequency of arrests and also contained the precinct with the highest number of arrests. On the other hand, Staten Island had the lowest total number of arrests, while Manhattan’s Precinct 22 recorded the lowest arrest count year to date. When comparing arrests with crime indicators, both shootings and NYPD complaints showed strong, positive correlations with arrest counts across precincts. However, the association between complaints and arrests was noticeably stronger and statistically significant, suggesting a stronger relationship between NYPD complaints and arrest activity at the precinct level. With respect to demographic patterns, individuals identified as Black represented the highest proportion of arrested across all five boroughs, although this pattern was not consistent across every individual precinct. These findings highlight variation in arrest composition across both geographic and demographic variables.</p>
-<p>My project had several limitations: the observed relationships are correlational and should NOT be interpreted as causal. While strong associations between variables are present, other unobserved variables, such as population size, socioeconomic conditions, policing presence, income distribution, and precinct-level demographic composition could also share a relationship with patterns observed in the NYPD arrest data. One other limitaition was time alignment with respect to the datasets; different dates outside the time covered in this dataset restrained the observations to only this year, restricting the ability to conduct a time series analysis. Future work could consider this analysis by including additional variables or sociopolitical context, particularly in relation to policing policy shifts such as stop-and-frisk.</p>
+<p>This project analyzed NYPD arrest data (YTD) to explore relationships between arrests and crime indicators as well as spatial patterns and racial composition across NYC. My project also had several limitations, including that the observed relationships are correlational and should NOT be interpreted as causal; potential influence from unobserved variables like population size, socioeconomic conditions, policing presence, income distribution, and precinct-level demographic composition; and time alignment across datasets that limited the analysis to this year and prevented a time series analysis. Future work could consider this analysis by including additional variables or sociopolitical context, particularly in relation to policing policy shifts such as stop-and-frisk. Overall, I feel like I built a lot of skills during this project and learned that even though data may not always be able to answer my questions, available data is a start to get me thinking about possible explanations.</p>
 
 
 </section>
