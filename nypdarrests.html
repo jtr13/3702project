@@ -192,7 +192,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./nyc_shelter_census.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">NYC Department of Homeless Services Daily Shelter Census Analysis</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">NYC Department of Homeless Services Shelter Census (2021-2026)</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -439,28 +439,26 @@ Projected CRS: NAD83 / New York Long Island (ftUS)</code></pre>
 <section id="concentration-by-precinct" class="level5" data-number="4.3.1.1.2">
 <h5 data-number="4.3.1.1.2" class="anchored" data-anchor-id="concentration-by-precinct"><span class="header-section-number">4.3.1.1.2</span> Concentration by Precinct</h5>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#|fig-width: 12</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>top_precincts_counts <span class="ot">&lt;-</span> arrests <span class="sc">|&gt;</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(Precinct, arrest_boro) <span class="sc">|&gt;</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">count =</span> n) <span class="sc">|&gt;</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(count)) <span class="sc">|&gt;</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">10</span>)</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(top_precincts_counts, <span class="fu">aes</span>(<span class="at">x =</span> count, <span class="at">y =</span> <span class="fu">fct_reorder</span>(<span class="fu">as.factor</span>(Precinct), count)</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>                                 , <span class="at">color =</span> arrest_boro)) <span class="sc">+</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">2.5</span>) <span class="sc">+</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Bronx"</span> <span class="ot">=</span> <span class="st">"#0074D9"</span>, <span class="st">"Brooklyn"</span> <span class="ot">=</span> <span class="st">"#2ECC40"</span>, </span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>       <span class="st">"Manhattan"</span> <span class="ot">=</span> <span class="st">"#85144b"</span>, <span class="st">"Queens"</span> <span class="ot">=</span> <span class="st">"#FF4136"</span>, <span class="st">"Staten Island"</span> <span class="ot">=</span> <span class="st">"#FF851B"</span>)) <span class="sc">+</span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> count), <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.3</span>, <span class="at">size =</span> <span class="fl">2.5</span>) <span class="sc">+</span></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"Precinct"</span>, <span class="at">x =</span> <span class="st">"Number of Arrests"</span>, <span class="at">title =</span> <span class="st">"Top 10 Precincts With Highest Number of Arrests"</span>,</span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Total Number of Arrests from January 1, 2026 to March 31, 2026"</span>, <span class="at">color =</span> <span class="st">"Borough"</span>) <span class="sc">+</span></span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>), <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="dv">9</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>top_precincts_counts <span class="ot">&lt;-</span> arrests <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(Precinct, arrest_boro) <span class="sc">|&gt;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">count =</span> n) <span class="sc">|&gt;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(count)) <span class="sc">|&gt;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">10</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(top_precincts_counts, <span class="fu">aes</span>(<span class="at">x =</span> count, <span class="at">y =</span> <span class="fu">fct_reorder</span>(<span class="fu">as.factor</span>(Precinct), count)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>                                 , <span class="at">color =</span> arrest_boro)) <span class="sc">+</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">2.5</span>) <span class="sc">+</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Bronx"</span> <span class="ot">=</span> <span class="st">"#0074D9"</span>, <span class="st">"Brooklyn"</span> <span class="ot">=</span> <span class="st">"#2ECC40"</span>, </span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>       <span class="st">"Manhattan"</span> <span class="ot">=</span> <span class="st">"#85144b"</span>, <span class="st">"Queens"</span> <span class="ot">=</span> <span class="st">"#FF4136"</span>, <span class="st">"Staten Island"</span> <span class="ot">=</span> <span class="st">"#FF851B"</span>)) <span class="sc">+</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> count), <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.2</span>, <span class="at">size =</span> <span class="fl">2.5</span>) <span class="sc">+</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"Precinct"</span>, <span class="at">x =</span> <span class="st">"Number of Arrests"</span>, <span class="at">title =</span> <span class="st">"Top 10 Precincts With Highest Number of Arrests"</span>,</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Total Number of Arrests from January 1, 2026 to March 31, 2026"</span>, <span class="at">color =</span> <span class="st">"Borough"</span>) <span class="sc">+</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>), <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="dv">9</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="nypdarrests_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+<p><img src="nypdarrests_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="960"></p>
 </figure>
 </div>
 </div>
@@ -671,8 +669,8 @@ F-statistic: 779.2 on 1 and 76 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 <p>As represented in the bar graph, out of the 2545 people arrested in Precinct 75, 68% were identified as Black, 18% were identified as White Hispanic, 6% were identified as Black hispanic, 4% were identified as White, 3% were identified as Asian/Pacific Islander, and less than 0% were identified as American Indian/Alaskan Native or unknown.</p>
 </section>
-<section id="what-is-the-racial-distribution-of-people-who-are-arrested-in-the-precinct-with-the-lowesr-number-of-arrests" class="level4" data-number="4.3.3.3">
-<h4 data-number="4.3.3.3" class="anchored" data-anchor-id="what-is-the-racial-distribution-of-people-who-are-arrested-in-the-precinct-with-the-lowesr-number-of-arrests"><span class="header-section-number">4.3.3.3</span> What is the racial distribution of people who are arrested in the precinct with the lowesr number of arrests?</h4>
+<section id="what-is-the-racial-distribution-of-people-who-are-arrested-in-the-precinct-with-the-lowest-number-of-arrests" class="level4" data-number="4.3.3.3">
+<h4 data-number="4.3.3.3" class="anchored" data-anchor-id="what-is-the-racial-distribution-of-people-who-are-arrested-in-the-precinct-with-the-lowest-number-of-arrests"><span class="header-section-number">4.3.3.3</span> What is the racial distribution of people who are arrested in the precinct with the lowest number of arrests?</h4>
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>Precinct[<span class="fu">which.min</span>(data<span class="sc">$</span>arrests)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -706,6 +704,21 @@ F-statistic: 779.2 on 1 and 76 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 <p>As represented in the bar graph, there were a total of 19 arrests in Precinct 22. Out of those arrests, 58% were people identified as hispanics, 32% were people identified as black, and 11% were people identified as white.</p>
+<p>As pointed out by some of my classmates, Precinct 75 and Precinct 22 differ in several ways, including but not limited to population size, socioeconomic composition, and tourism. These differences may contribute to variation in overall arrest counts and should not be ignored when interpreting cross-precinct comparisons. However, the focus of this section is not to explain differences in total arrests, but rather to look at whether, within the population of individuals who were arrested in NYC between 1/1/26 and 3/31/26, the racial distribution of arrests is statistically independent of borough. Below is a chi-square test I ran to asses the relationship between race and borough.</p>
+<section id="chi-square-test" class="level5" data-number="4.3.3.3.1">
+<h5 data-number="4.3.3.3.1" class="anchored" data-anchor-id="chi-square-test"><span class="header-section-number">4.3.3.3.1</span> Chi-square test</h5>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(<span class="fu">table</span>(arrests<span class="sc">$</span>arrest_boro, arrests<span class="sc">$</span>perp_race))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Pearson's Chi-squared test
+
+data:  table(arrests$arrest_boro, arrests$perp_race)
+X-squared = 7520.3, df = 24, p-value &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>In this chisq test of independence, there is a statistically significant association (p &lt; 0.001) between borough and racial distribution of arrested individuals. In other words, the distribution of race among arrested individuals is not independent of the borough in which the arrest occurred. Future studies can investigate borough-level characteristics, such as population size, socioeconomic conditions, or policing patterns, to see what are strongly associated with variation in the racial distribution of arrests across boroughs.</p>
+</section>
 </section>
 </section>
 <section id="short-summary-of-findings" class="level3" data-number="4.3.4">
@@ -1123,8 +1136,8 @@ F-statistic: 779.2 on 1 and 76 DF,  p-value: &lt; 2.2e-16</code></pre>
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./nyc_shelter_census.html" class="pagination-link" aria-label="NYC Department of Homeless Services Daily Shelter Census Analysis">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">NYC Department of Homeless Services Daily Shelter Census Analysis</span></span>
+      <a href="./nyc_shelter_census.html" class="pagination-link" aria-label="NYC Department of Homeless Services Shelter Census (2021-2026)">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">NYC Department of Homeless Services Shelter Census (2021-2026)</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
