@@ -11,17 +11,6 @@ The NYC subway is one of the busiest transit systems in the world, running 24/7 
 This project uses two datasets, both publicly available through New York State's open data portal. The first is the [MTA Subway Hourly Ridership dataset](https://data.ny.gov/Transportation/MTA-Subway-Hourly-Ridership-2020-2024/wujg-7c2s), which records the number of riders entering each subway station complex every hour, broken down by payment method and fare class category. The data includes station name, borough, latitude and longitude coordinates, and ridership counts. Due to the large size of this dataset — over 4GB for the full 2020–2024 period — this analysis focuses on one week of data from January 1–7, 2024, resulting in approximately 556,000 rows. The second dataset is the [MTA Subway Delay-Causing Incidents dataset](https://data.ny.gov/Transportation/MTA-Subway-Delay-Causing-Incidents-Beginning-2020/g937-7k7c), which records monthly delay counts by subway line, day type (weekday vs. weekend), and reporting category (the cause of the delay). This dataset covers all of 2024 and is much smaller. One known issue with the ridership data is that a very small number of rows contain missing or non-numeric ridership values, which were handled using `na.rm = TRUE` throughout.
 
 ## Missing Value Analysis
-
-```{r}
-library(redav)
-plot_missing(ridership, num_char = 5)
-plot_missing(delays)
-```
-
-Both datasets are pretty clean. The delays dataset has no missing values at all. The ridership dataset has a tiny number of missing values only in the ridership column. Since it's such a small fraction of 556,000 rows, it doesn't affect the analysis at all.
-
-## Results
-
 ```{r}
 library(tidyverse)
 ridership <- read.csv("data/hourlyridership.csv") |>
@@ -33,6 +22,16 @@ ridership <- read.csv("data/hourlyridership.csv") |>
     ridership = as.numeric(ridership)
   )
 ```
+
+```{r}
+library(redav)
+plot_missing(ridership, num_char = 5)
+plot_missing(delays)
+```
+
+Both datasets are pretty clean. The delays dataset has no missing values at all. The ridership dataset has a tiny number of missing values only in the ridership column. Since it's such a small fraction of 556,000 rows, it doesn't affect the analysis at all.
+
+## Results
 
 ### When Do New Yorks Ride the Subway?
 
