@@ -18,4 +18,5 @@ Imports:
     tidyverse,
     tigris
 Remotes: 
-    jtr13/redav
+    jtr13/redav,
+    walkerke/tidycensus
